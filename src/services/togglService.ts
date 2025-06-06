@@ -24,6 +24,7 @@ export class TogglService {
   private static apiToken: string = '';
   private static baseUrl: string = '/toggl-api';
   private static workspaceId: number | null = null;
+  private static reportToken: string = '58b3637913351d762d43a00ad7c88d85'; // Report-Token
 
   static async initialize(): Promise<boolean> {
     try {
@@ -208,5 +209,72 @@ export class TogglService {
       console.error('Fehler beim Verbindungstest:', error);
       return false;
     }
+  }
+
+  static async fetchCSVReport(params: {
+    start_date: string;
+    end_date: string;
+    order_field?: string;
+    order_desc?: boolean;
+  }): Promise<string> {
+    if (!this.apiToken) {
+      throw new Error('API Token nicht gesetzt');
+    }
+
+    const headers = new Headers({
+      'Authorization': `Basic ${btoa(`${this.apiToken}:api_token`)}`,
+      'Content-Type': 'application/json',
+      'Accept': 'text/csv'
+    });
+
+    try {
+      const response = await fetch(`${this.baseUrl}/reports/api/v3/shared/${this.reportToken}/csv`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          start_date: params.start_date,
+          end_date: params.end_date,
+          order_field: params.order_field || 'date',
+          order_desc: params.order_desc || true
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Fehler beim Abrufen des Reports: ${response.status} ${response.statusText}`);
+      }
+
+      const csvData = await response.text();
+      return csvData;
+    } catch (error) {
+      console.error('Fehler beim Abrufen des CSV-Reports:', error);
+      throw error;
+    }
+  }
+
+  static async parseCSVData(csvData: string): Promise<any[]> {
+    // Split CSV in Zeilen
+    const lines = csvData.split('\n');
+    if (lines.length < 2) return [];
+
+    // Extrahiere Header
+    const headers = lines[0].split(',').map(header => 
+      header.trim().replace(/^"(.*)"$/, '$1') // Entferne Anführungszeichen
+    );
+
+    // Konvertiere Zeilen in Objekte
+    return lines.slice(1)
+      .filter(line => line.trim() !== '') // Überspringe leere Zeilen
+      .map(line => {
+        const values = line.split(',').map(value => 
+          value.trim().replace(/^"(.*)"$/, '$1')
+        );
+        
+        const entry: any = {};
+        headers.forEach((header, index) => {
+          entry[header] = values[index];
+        });
+        
+        return entry;
+      });
   }
 } 

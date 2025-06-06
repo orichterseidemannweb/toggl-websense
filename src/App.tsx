@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import styles from './App.module.css'
 import Login from './components/Login'
-import { TimeReport } from './components/TimeReport'
+import { ReportView } from './components/ReportView'
 import { StatusBar } from './components/StatusBar'
 import { TogglService } from './services/togglService'
 
@@ -64,7 +64,7 @@ function App() {
               <Login onTokenChange={handleTokenChange} />
             </>
           ) : (
-            <TimeReport />
+            <ReportView />
           )}
         </main>
       </div>
