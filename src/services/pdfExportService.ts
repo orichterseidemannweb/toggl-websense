@@ -75,10 +75,18 @@ export class PDFExportService {
       headerHeight = 49;
     }
     
-    // Spalten filtern - Projekt-Spalte entfernen wenn nur ein Projekt
-    const filteredColumns = hasOnlyOneProject 
-      ? columns.filter(col => col.field !== 'project' && col.field !== 'Project')
-      : columns;
+    // Spalten filtern - Kunde und Projekt-Spalte intelligent entfernen
+    const filteredColumns = columns.filter(col => {
+      // Kundenspalte immer entfernen (steht im Header)
+      if (col.field === 'client' || col.field === 'Client') {
+        return false;
+      }
+      // Projekt-Spalte nur entfernen wenn nur ein Projekt
+      if ((col.field === 'project' || col.field === 'Project') && hasOnlyOneProject) {
+        return false;
+      }
+      return true;
+    });
     
     // Tabellen-Header und -Daten vorbereiten
     const tableColumns = filteredColumns.map(col => col.header);
