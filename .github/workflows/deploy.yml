@@ -1,0 +1,53 @@
+name: 🚀 Build and Deploy Toggl WebSense
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # Erlaubt manuelles Triggern
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: 🔧 Install Dependencies
+      run: npm ci
+      
+    - name: 🏗️ Build Production
+      run: npm run build:deploy
+      
+    - name: 📋 List Build Output
+      run: |
+        echo "📁 Build completed! Contents:"
+        ls -la dist/
+        echo "📊 Asset sizes:"
+        ls -lh dist/assets/
+        
+    - name: 🌐 Deploy to Web Server via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: './dist/'
+        server-dir: '/websense/'
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          **/.DS_Store
+          
+    - name: ✅ Deployment Complete
+      run: |
+        echo "🎉 Toggl WebSense v1.4.0 successfully deployed!"
+        echo "🌐 Available at: https://yourdomain.com/websense/"
+        echo "📦 Features: Revolutionary Bulk PDF Export" 

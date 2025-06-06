@@ -16,6 +16,17 @@ Eine moderne React-Webanwendung zur Verwaltung und Analyse von Toggl-Zeiterfassu
 - 🔍 **Erweiterte Filter** - Sortierung und Filterung der Zeiteinträge
 - 🚫 **Intelligente Filterung** - Interne Projekte werden automatisch ausgeblendet
 
+## 🆕 Version 1.4.1 - Optimierte Bulk-Export Erfahrung
+
+### 🛠️ Bug-Fixes & Verbesserungen
+- **✅ Overlay-Problem behoben**: Entfernung des problematischen Progress-Overlays für stabileren Bulk-Export
+- **🎯 Fokus auf Kernfunktion**: Bulk-Export läuft nun vollständig im Hintergrund ohne UI-Störungen
+- **📊 Konsolen-Logging**: Entwickler können Fortschritt weiterhin in Browser-Konsole verfolgen
+- **🚀 100% Zuverlässigkeit**: Keine leeren oder hängenden Overlays mehr
+- **⚡ Bessere Performance**: Entfernung unnötiger UI-Updates verbessert Reaktionszeit
+
+**Pragmatischer Ansatz**: Weniger UI-Komplexität = mehr Stabilität = bessere User Experience
+
 ## 🆕 Neue Features in v1.4.0
 
 ### 📦 Bulk-PDF-Export - Der Game-Changer!
