@@ -7,7 +7,11 @@ interface UserInfo {
   email: string;
 }
 
-export const StatusBar = () => {
+interface StatusBarProps {
+  onLogout?: () => void;
+}
+
+export const StatusBar = ({ onLogout }: StatusBarProps) => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -38,6 +42,11 @@ export const StatusBar = () => {
     }
   };
 
+  const handleLogout = () => {
+    TogglService.clearToken();
+    onLogout?.();
+  };
+
   if (loading) {
     return <div className={styles.statusBar}>Lade Benutzerinformationen...</div>;
   }
@@ -53,6 +62,13 @@ export const StatusBar = () => {
         <span className={styles.userName}>{userInfo.fullname}</span>
         <span className={styles.userEmail}>{userInfo.email}</span>
       </div>
+      <button 
+        className={styles.logoutButton} 
+        onClick={handleLogout}
+        title="Abmelden"
+      >
+        ⏻
+      </button>
     </div>
   );
 }; 

@@ -11,53 +11,111 @@ interface ReportData {
 
 export class TogglService {
   private static readonly BASE_URL = '/toggl-api/reports/api/v3/shared';
-  private static readonly REPORT_ID = import.meta.env.VITE_TOGGL_REPORT_ID;
-  private static readonly TOKEN = import.meta.env.VITE_TOGGL_TOKEN;
+  private static readonly REPORT_ID = '58b3637913351d762d43a00ad7c88d85'; // Hardcoded, da nicht sensitiv
+  private static readonly SESSION_KEY = 'toggl_session_token'; // Key für sessionStorage
   private static apiToken: string = '';
 
   public static async initialize(): Promise<boolean> {
-    console.log('Initialisiere TogglService');
-    console.log('ENV Token:', this.TOKEN);
-    console.log('ENV Report ID:', this.REPORT_ID);
+    console.log('TogglService initialisiert - prüfe gespeicherten Token...');
     
-    if (this.TOKEN) {
-      console.log('Token gefunden, setze API Token');
-      this.apiToken = this.TOKEN;
-      return this.testConnection();
+    // Versuche Token aus sessionStorage zu laden
+    const storedToken = this.loadTokenFromSession();
+    if (storedToken) {
+      console.log('Gespeicherter Token gefunden - teste Verbindung...');
+      this.apiToken = storedToken;
+      const isValid = await this.testConnection();
+      if (isValid) {
+        console.log('Gespeicherter Token ist gültig');
+        return true;
+      } else {
+        console.log('Gespeicherter Token ist ungültig - lösche ihn');
+        this.clearStoredToken();
+      }
     }
-    console.log('Kein Token gefunden');
+    
+    console.log('Kein gültiger Token gefunden - Benutzer muss sich anmelden');
     return false;
   }
 
   public static async setApiToken(token: string): Promise<boolean> {
-    console.log('Setze neuen API Token:', token);
+    console.log('API Token wird gesetzt und getestet...');
     this.apiToken = token;
-    return this.testConnection();
+    const isValid = await this.testConnection();
+    
+    if (isValid) {
+      // Nur bei gültigem Token speichern
+      this.saveTokenToSession(token);
+      console.log('Token erfolgreich gespeichert');
+    } else {
+      // Bei ungültigem Token nicht speichern
+      this.apiToken = '';
+      console.log('Token ungültig - nicht gespeichert');
+    }
+    
+    return isValid;
   }
 
   public static getApiToken(): string {
     return this.apiToken;
   }
 
+  // Token aus Memory und Storage löschen (für Logout-Funktionalität)
+  public static clearToken(): void {
+    this.apiToken = '';
+    this.clearStoredToken();
+    console.log('Token wurde vollständig gelöscht');
+  }
+
+  // Private Methoden für Token-Storage
+  private static saveTokenToSession(token: string): void {
+    try {
+      // Einfache Base64-Kodierung für minimale Verschleierung (nicht Sicherheit!)
+      const encodedToken = btoa(token);
+      sessionStorage.setItem(this.SESSION_KEY, encodedToken);
+    } catch (error) {
+      console.error('Fehler beim Speichern des Tokens:', error);
+    }
+  }
+
+  private static loadTokenFromSession(): string | null {
+    try {
+      const encodedToken = sessionStorage.getItem(this.SESSION_KEY);
+      if (encodedToken) {
+        // Base64-Dekodierung
+        return atob(encodedToken);
+      }
+    } catch (error) {
+      console.error('Fehler beim Laden des Tokens:', error);
+      // Bei Fehler Token löschen
+      this.clearStoredToken();
+    }
+    return null;
+  }
+
+  private static clearStoredToken(): void {
+    try {
+      sessionStorage.removeItem(this.SESSION_KEY);
+    } catch (error) {
+      console.error('Fehler beim Löschen des gespeicherten Tokens:', error);
+    }
+  }
+
   public static async testConnection(): Promise<boolean> {
     try {
-      console.log('Teste Verbindung mit Token:', this.apiToken);
-      const authHeader = btoa(`${this.apiToken}:api_token`);
-      console.log('Auth Header:', authHeader);
-      
       const response = await fetch('/toggl-api/api/v9/me', {
         headers: {
-          'Authorization': `Basic ${authHeader}`,
+          'Authorization': `Basic ${btoa(`${this.apiToken}:api_token`)}`,
           'Content-Type': 'application/json',
         },
       });
 
-      console.log('Verbindungstest Antwort:', response.status);
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('API Fehler:', errorText);
+        console.error('Verbindungstest fehlgeschlagen:', response.status);
+        return false;
       }
-      return response.ok;
+      
+      console.log('Verbindung erfolgreich hergestellt');
+      return true;
     } catch (error) {
       console.error('Fehler beim Testen der Verbindung:', error);
       return false;

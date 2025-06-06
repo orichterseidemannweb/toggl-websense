@@ -49,13 +49,19 @@ function App() {
     }
   };
 
+  const handleLogout = () => {
+    TogglService.clearToken(); // Token aus Memory und Storage löschen
+    setIsAuthenticated(false);
+    setError(null);
+  };
+
   return (
     <div className={styles.app}>
       <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.headerContent}>
             <h1>Toggl WebSense</h1>
-            {isAuthenticated && <StatusBar />}
+            {isAuthenticated && <StatusBar onLogout={handleLogout} />}
           </div>
         </header>
         <main className={styles.main}>
