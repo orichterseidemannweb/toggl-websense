@@ -299,16 +299,20 @@ export const ReportView = () => {
     setSelectedProject('Projekt auswählen');
   }, [selectedClient]);
 
-  // Auto-load Report beim Mount und bei Datumsänderungen
+  // Auto-load Report nur wenn API-Token vorhanden ist
   useEffect(() => {
-    loadReport();
+    const apiToken = TogglService.getApiToken();
+    if (apiToken && apiToken.length > 0) {
+      loadReport();
+    }
   }, [selectedDate]);
 
-  // Initial Load beim ersten Rendern
+  // Initial Load beim ersten Rendern - nur wenn API-Token vorhanden
   useEffect(() => {
     // Kleiner Delay um sicherzustellen dass TogglService bereit ist
     const timer = setTimeout(() => {
-      if (reportData.length === 0 && !loading && !error) {
+      const apiToken = TogglService.getApiToken();
+      if (apiToken && apiToken.length > 0 && reportData.length === 0 && !loading && !error) {
         loadReport();
       }
     }, 500);

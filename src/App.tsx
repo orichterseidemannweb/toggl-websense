@@ -21,8 +21,16 @@ function App() {
       const success = await TogglService.initialize();
       // console.log('Toggl-Initialisierung Ergebnis:', success);
       setIsAuthenticated(success);
+      
+      // Nur Fehlermeldung anzeigen wenn ein gespeicherter Token ungültig war
+      // Beim ersten Besuch (kein Token vorhanden) keine Fehlermeldung
       if (!success) {
-        setError('API-Token nicht gefunden oder ungültig');
+        // Prüfe ob überhaupt ein Token im Storage war
+        const hadStoredToken = sessionStorage.getItem('toggl_session_token');
+        if (hadStoredToken) {
+          setError('Gespeicherter API-Token ist ungültig - bitte neu anmelden');
+        }
+        // Beim ersten Besuch: keine Fehlermeldung, nur Login-Form anzeigen
       }
     } catch (err) {
       console.error('Fehler bei der Toggl-Initialisierung:', err);
