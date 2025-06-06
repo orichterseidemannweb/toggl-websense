@@ -43,83 +43,68 @@ export const FilterOptions = ({ onFilterChange }: FilterOptionsProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div className="relative">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Kunde</label>
-          <div className="relative">
-            <select
-              className="block w-full rounded-md border-gray-300 pl-3 pr-10 py-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={filters.client}
-              onChange={(e) => handleSelectChange('client', e.target.value)}
-            >
-              <option value="">Alle Kunden</option>
-              {clients.map((client) => (
-                <option key={client} value={client}>
-                  {client}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
-          </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Kunde</label>
+          <select
+            className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+            value={filters.client}
+            onChange={(e) => handleSelectChange('client', e.target.value)}
+          >
+            <option value="">Alle Kunden</option>
+            {clients.map((client) => (
+              <option key={client} value={client}>
+                {client}
+              </option>
+            ))}
+          </select>
         </div>
-
-        <div className="relative">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Projekt</label>
-          <div className="relative">
-            <select
-              className="block w-full rounded-md border-gray-300 pl-3 pr-10 py-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              value={filters.project}
-              onChange={(e) => handleSelectChange('project', e.target.value)}
-            >
-              <option value="">Alle Projekte</option>
-              {projects.map((project) => (
-                <option key={project} value={project}>
-                  {project}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
-          </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Projekt</label>
+          <select
+            className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+            value={filters.project}
+            onChange={(e) => handleSelectChange('project', e.target.value)}
+          >
+            <option value="">Alle Projekte</option>
+            {projects.map((project) => (
+              <option key={project} value={project}>
+                {project}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
-      <div className="bg-gray-50 rounded-md p-4">
-        <label className="block text-sm font-medium text-gray-700 mb-3">Anzeigeoptionen</label>
-        <div className="space-y-3">
-          <label className="inline-flex items-center">
+      <div className="space-y-4">
+        <label className="block text-sm font-medium text-gray-700">Anzeigeoptionen</label>
+        <div className="space-y-2">
+          <label className="flex items-center">
             <input
               type="checkbox"
               className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               checked={filters.showAssignee}
               onChange={() => handleCheckboxChange('showAssignee')}
             />
-            <span className="ml-2 text-sm text-gray-700">Bearbeiter anzeigen</span>
+            <span className="ml-2">Bearbeiter anzeigen</span>
           </label>
-          <label className="inline-flex items-center">
+          <label className="flex items-center">
             <input
               type="checkbox"
               className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               checked={filters.showDate}
               onChange={() => handleCheckboxChange('showDate')}
             />
-            <span className="ml-2 text-sm text-gray-700">Datum anzeigen</span>
+            <span className="ml-2">Datum anzeigen</span>
           </label>
-          <label className="inline-flex items-center">
+          <label className="flex items-center">
             <input
               type="checkbox"
               className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               checked={filters.showDescription}
               onChange={() => handleCheckboxChange('showDescription')}
             />
-            <span className="ml-2 text-sm text-gray-700">Beschreibung anzeigen</span>
+            <span className="ml-2">Beschreibung anzeigen</span>
           </label>
         </div>
       </div>

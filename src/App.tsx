@@ -1,16 +1,8 @@
 import { useState, useEffect } from 'react'
 import styles from './App.module.css'
 import Login from './components/Login'
-import { ReportView } from './components/ReportView'
 import { StatusBar } from './components/StatusBar'
 import { TogglService } from './services/togglService'
-
-interface FilterState {
-  startDate: Date;
-  endDate: Date;
-  projectId?: number;
-  clientId?: number;
-}
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -64,7 +56,7 @@ function App() {
               <Login onTokenChange={handleTokenChange} />
             </>
           ) : (
-            <ReportView />
+            <div>Erfolgreich verbunden!</div>
           )}
         </main>
       </div>
@@ -72,4 +64,4 @@ function App() {
   )
 }
 
-export default App
+export default App; 
