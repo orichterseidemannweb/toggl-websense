@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { TogglService } from '../services/togglService';
 import { REPORT_COLUMNS } from '../config/columns';
+import { ClientFilter } from './ClientFilter';
 import styles from './ReportView.module.css';
 
 interface ReportData {
@@ -11,6 +12,7 @@ export const ReportView = () => {
   const [reportData, setReportData] = useState<ReportData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedClient, setSelectedClient] = useState<string>('Alle Kunden');
 
   const loadReport = async () => {
     setLoading(true);
@@ -36,6 +38,20 @@ export const ReportView = () => {
       setLoading(false);
     }
   };
+
+  // Extrahiere einzigartige Kunden aus den Daten
+  const availableClients = useMemo(() => {
+    const clients = [...new Set(reportData.map(row => row['Client']).filter(Boolean))];
+    return clients.sort();
+  }, [reportData]);
+
+  // Filtere die Daten basierend auf dem ausgewählten Kunden
+  const filteredData = useMemo(() => {
+    if (selectedClient === 'Alle Kunden') {
+      return reportData;
+    }
+    return reportData.filter(row => row['Client'] === selectedClient);
+  }, [reportData, selectedClient]);
 
   useEffect(() => {
     loadReport();
@@ -81,6 +97,14 @@ export const ReportView = () => {
         </button>
       </div>
 
+      {availableClients.length > 0 && (
+        <ClientFilter
+          clients={availableClients}
+          selectedClient={selectedClient}
+          onFilterChange={setSelectedClient}
+        />
+      )}
+
       <div className={styles.tableContainer}>
         <table className={styles.table}>
           <thead>
@@ -91,7 +115,7 @@ export const ReportView = () => {
             </tr>
           </thead>
           <tbody>
-            {reportData.map((row, index) => (
+            {filteredData.map((row, index) => (
               <tr key={index}>
                 {visibleColumns.map(column => (
                   <td key={column.field}>{row[column.field]}</td>
@@ -100,6 +124,15 @@ export const ReportView = () => {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className={styles.filterSummary}>
+        Zeige {filteredData.length} von {reportData.length} Einträgen
+        {selectedClient !== 'Alle Kunden' && (
+          <span className={styles.filterIndicator}>
+            • Gefiltert nach: {selectedClient}
+          </span>
+        )}
       </div>
     </div>
   );

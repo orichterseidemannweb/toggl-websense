@@ -76,6 +76,7 @@
   border-radius: 16px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 16px;
 }
 
 .table {
@@ -105,4 +106,19 @@
 .table tr:hover {
   background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
   transition: background 0.2s ease;
+}
+
+.filterSummary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.filterIndicator {
+  color: #3b82f6;
+  font-weight: 500;
 } 
