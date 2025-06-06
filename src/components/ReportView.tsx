@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { TogglService } from '../services/togglService';
+import { REPORT_COLUMNS } from '../config/columns';
 import styles from './ReportView.module.css';
 
 interface ReportData {
@@ -68,8 +69,8 @@ export const ReportView = () => {
     );
   }
 
-  // Bestimme die Spalten aus den Daten
-  const columns = Object.keys(reportData[0]);
+  // Filtere nur die sichtbaren Spalten
+  const visibleColumns = REPORT_COLUMNS.filter(col => col.visible);
 
   return (
     <div className={styles.container}>
@@ -84,16 +85,16 @@ export const ReportView = () => {
         <table className={styles.table}>
           <thead>
             <tr>
-              {columns.map(column => (
-                <th key={column}>{column}</th>
+              {visibleColumns.map(column => (
+                <th key={column.field}>{column.header}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {reportData.map((row, index) => (
               <tr key={index}>
-                {columns.map(column => (
-                  <td key={column}>{row[column]}</td>
+                {visibleColumns.map(column => (
+                  <td key={column.field}>{row[column.field]}</td>
                 ))}
               </tr>
             ))}
