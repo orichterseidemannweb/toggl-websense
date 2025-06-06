@@ -30,7 +30,7 @@ const MONTH_NAMES = [
   'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'
 ];
 
-const LOGO_URL = 'https://seidemann.com/_Resources/Persistent/c/a/b/c/cabcf66af29f711fffa1d97769c64ec502d38896/Logo%20Seidemann%20Web-2560x560.jpg';
+const LOGO_URL = '/logo.png';
 
 export class PDFExportService {
   static async generateActivityReport(options: ExportOptions): Promise<void> {
@@ -43,8 +43,11 @@ export class PDFExportService {
     // Lade und füge Logo hinzu
     try {
       const logoImg = await this.loadImage(LOGO_URL);
-      // Logo rechts positionieren (185mm von links, 15mm von oben, 20mm breit)
-      doc.addImage(logoImg, 'JPEG', pageWidth - 35, 15, 30, 15);
+      // Logo rechts positionieren - korrektes Seitenverhältnis 600x131px (≈4.6:1)
+      const logoWidth = 40; // mm
+      const logoHeight = logoWidth / 4.58; // Korrektes Seitenverhältnis
+      // Logo rechtsbündig mit der Tabelle (20mm rechter Rand)
+      doc.addImage(logoImg, 'PNG', pageWidth - logoWidth - 20, 15, logoWidth, logoHeight);
     } catch (error) {
       console.warn('Logo konnte nicht geladen werden:', error);
     }
@@ -172,7 +175,7 @@ export class PDFExportService {
         canvas.height = img.height;
         ctx.drawImage(img, 0, 0);
         
-        const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+        const dataURL = canvas.toDataURL('image/png');
         resolve(dataURL);
       };
       img.onerror = () => reject(new Error('Failed to load image'));
