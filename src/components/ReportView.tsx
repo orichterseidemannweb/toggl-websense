@@ -72,7 +72,25 @@ export const ReportView = () => {
   // Zeige Projektfilter nur wenn ein spezifischer Kunde ausgewählt ist und mehr als ein Projekt existiert
   const shouldShowProjectFilter = selectedClient !== 'Alle Kunden' && availableProjects.length > 1;
 
-  // Filtere die Daten basierend auf dem ausgewählten Kunden und Projekt
+  // Hilfsfunktion zum Konvertieren von Zeitdauer-Strings (HH:MM:SS) zu Minuten
+  const parseTimeToMinutes = (timeStr: string): number => {
+    if (!timeStr || timeStr === '-') return 0;
+    const parts = timeStr.split(':');
+    if (parts.length === 3) {
+      return parseInt(parts[0]) * 60 + parseInt(parts[1]) + parseInt(parts[2]) / 60;
+    }
+    return 0;
+  };
+
+  // Hilfsfunktion zum Konvertieren von Minuten zurück zu HH:MM:SS Format
+  const formatMinutesToTime = (minutes: number): string => {
+    const hours = Math.floor(minutes / 60);
+    const mins = Math.floor(minutes % 60);
+    const secs = Math.floor((minutes % 1) * 60);
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Filtere und gruppiere die Daten basierend auf dem ausgewählten Kunden und Projekt
   const filteredData = useMemo(() => {
     let filtered = reportData;
     
@@ -83,9 +101,60 @@ export const ReportView = () => {
     if (selectedProject !== 'Alle Projekte' && shouldShowProjectFilter) {
       filtered = filtered.filter(row => row['Project'] === selectedProject);
     }
+
+    // Gruppiere gleiche Tätigkeiten nur wenn Beschreibung ausgeblendet ist
+    if (!columnVisibility.beschreibung && filtered.length > 0) {
+      const groupedData = new Map<string, ReportData>();
+      
+      filtered.forEach(row => {
+        const task = row['Task'] || '';
+        const client = row['Client'] || '';
+        const project = row['Project'] || '';
+        
+        // Erstelle einen eindeutigen Schlüssel für die Gruppierung
+        const groupKey = `${client}|${project}|${task}`;
+        
+        if (groupedData.has(groupKey)) {
+          const existing = groupedData.get(groupKey)!;
+          
+          // Summiere die Dauer
+          const existingMinutes = parseTimeToMinutes(existing['Duration']);
+          const currentMinutes = parseTimeToMinutes(row['Duration']);
+          const totalMinutes = existingMinutes + currentMinutes;
+          
+          // Aktualisiere die Dauer
+          existing['Duration'] = formatMinutesToTime(totalMinutes);
+          
+          // Für andere Felder: zeige "Verschiedene" wenn unterschiedlich
+          if (existing['User'] !== row['User']) {
+            existing['User'] = 'Verschiedene Teammitglieder';
+          }
+          if (existing['Billable'] !== row['Billable']) {
+            existing['Billable'] = 'Gemischt';
+          }
+          if (existing['Start date'] !== row['Start date']) {
+            existing['Start date'] = 'Verschiedene Daten';
+          }
+          if (existing['Tags'] !== row['Tags']) {
+            existing['Tags'] = existing['Tags'] ? `${existing['Tags']}, ${row['Tags']}` : row['Tags'];
+          }
+          
+          // Beschreibung bleibt leer da ausgeblendet
+          existing['Description'] = '';
+          
+        } else {
+          // Erste Zeile für diese Tätigkeit
+          const newRow = { ...row };
+          newRow['Description'] = ''; // Beschreibung leer lassen
+          groupedData.set(groupKey, newRow);
+        }
+      });
+      
+      return Array.from(groupedData.values());
+    }
     
     return filtered;
-  }, [reportData, selectedClient, selectedProject, shouldShowProjectFilter]);
+  }, [reportData, selectedClient, selectedProject, shouldShowProjectFilter, columnVisibility.beschreibung]);
 
   // Reset Projekt-Auswahl wenn ein neuer Kunde ausgewählt wird
   useEffect(() => {
@@ -207,6 +276,11 @@ export const ReportView = () => {
         {selectedProject !== 'Alle Projekte' && shouldShowProjectFilter && (
           <span className={styles.filterIndicator}>
             • Projekt: {selectedProject}
+          </span>
+        )}
+        {!columnVisibility.beschreibung && reportData.length > 0 && (
+          <span className={styles.groupingIndicator}>
+            • 📊 Tätigkeiten gruppiert (Zeiten summiert)
           </span>
         )}
       </div>

@@ -121,4 +121,13 @@
 .filterIndicator {
   color: #3b82f6;
   font-weight: 500;
+}
+
+.groupingIndicator {
+  color: #7c3aed;
+  font-weight: 500;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+  padding: 2px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(124, 58, 237, 0.2);
 } 
