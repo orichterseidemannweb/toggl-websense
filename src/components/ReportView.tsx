@@ -4,6 +4,7 @@ import { REPORT_COLUMNS } from '../config/columns';
 import { ClientFilter } from './ClientFilter';
 import { ProjectFilter } from './ProjectFilter';
 import { ColumnVisibilityControl, ColumnVisibilityState } from './ColumnVisibilityControl';
+import { MonthSelector } from './MonthSelector';
 import styles from './ReportView.module.css';
 
 interface ReportData {
@@ -34,6 +35,11 @@ export const ReportView = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedClient, setSelectedClient] = useState<string>('Alle Kunden');
   const [selectedProject, setSelectedProject] = useState<string>('Alle Projekte');
+  const [selectedDate, setSelectedDate] = useState<Date>(() => {
+    // Standard: aktueller Monat
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
   const [columnVisibility, setColumnVisibility] = useState<ColumnVisibilityState>({
     teammitglieder: true,
     beschreibung: true,
@@ -52,10 +58,9 @@ export const ReportView = () => {
     setLoading(true);
     setError(null);
     try {
-      // Hole Daten für den aktuellen Monat
-      const now = new Date();
-      const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-      const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      // Hole Daten für den ausgewählten Monat
+      const startDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+      const endDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
 
       const csvData = await TogglService.fetchCSVReport({
         start_date: startDate.toISOString().split('T')[0],
@@ -287,7 +292,7 @@ export const ReportView = () => {
 
   useEffect(() => {
     loadReport();
-  }, []);
+  }, [selectedDate]);
 
   if (loading) {
     return (
@@ -328,6 +333,11 @@ export const ReportView = () => {
 
       <ColumnVisibilityControl
         onVisibilityChange={setColumnVisibility}
+      />
+
+      <MonthSelector
+        selectedDate={selectedDate}
+        onDateChange={setSelectedDate}
       />
 
       {availableClients.length > 0 && (
@@ -380,6 +390,9 @@ export const ReportView = () => {
 
       <div className={styles.filterSummary}>
         Zeige {filteredData.length} von {reportData.length} Einträgen
+        <span className={styles.filterIndicator}>
+          • Zeitraum: {['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'][selectedDate.getMonth()]} {selectedDate.getFullYear()}
+        </span>
         {selectedClient !== 'Alle Kunden' && (
           <span className={styles.filterIndicator}>
             • Kunde: {selectedClient}
