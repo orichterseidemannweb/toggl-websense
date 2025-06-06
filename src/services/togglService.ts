@@ -182,7 +182,17 @@ export class TogglService {
           headers.forEach((header, index) => {
             row[header] = values[index];
           });
-          data.push(row);
+
+          // Filter "Intern Web" Kunden und interne Projekte komplett heraus
+          const clientName = row['Client'] || row['Kunde'] || '';
+          const projectName = row['Project'] || row['Projekt'] || '';
+          
+          const isInternalClient = clientName.toLowerCase().includes('intern');
+          const isInternalProject = projectName.toLowerCase().includes('intern');
+          
+          if (!isInternalClient && !isInternalProject) {
+            data.push(row);
+          }
         }
       }
 

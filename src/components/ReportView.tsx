@@ -6,6 +6,7 @@ import { ProjectFilter } from './ProjectFilter';
 import { ColumnVisibilityControl, ColumnVisibilityState } from './ColumnVisibilityControl';
 import { MonthSelector } from './MonthSelector';
 import { PDFExportService } from '../services/pdfExportService';
+import { BulkExportProgress } from './BulkExportProgress';
 import styles from './ReportView.module.css';
 
 interface ReportData {
@@ -54,6 +55,16 @@ export const ReportView = () => {
     abrechenbareStunden: true,
     tags: false // Standardmäßig deaktiviert
   });
+
+  // Bulk Export State
+  const [bulkExportProgress, setBulkExportProgress] = useState({
+    isVisible: false,
+    current: 0,
+    total: 0,
+    clientName: '',
+    projectName: ''
+  });
+  const [bulkExportCancelled, setBulkExportCancelled] = useState(false);
 
   const loadReport = async () => {
     setLoading(true);
@@ -336,6 +347,93 @@ export const ReportView = () => {
     }
   };
 
+  // Bulk Export Funktionalität
+  const exportAllToPDF = async () => {
+    if (availableClients.length === 0) {
+      alert('Keine Kunden für Export verfügbar.');
+      return;
+    }
+
+    setBulkExportCancelled(false);
+    let progressTimer: NodeJS.Timeout | null = null;
+    
+    // Zeige Progress-Overlay nur bei mehr als 3 PDFs oder nach 2 Sekunden
+    const showProgressAfterDelay = () => {
+      progressTimer = setTimeout(() => {
+        setBulkExportProgress({
+          isVisible: true,
+          current: 0,
+          total: 0,
+          clientName: 'Generierung läuft...',
+          projectName: ''
+        });
+      }, 2000); // 2 Sekunden Delay
+    };
+
+    showProgressAfterDelay();
+
+    try {
+      const results = await PDFExportService.generateBulkExport({
+        allData: reportData,
+        columns: visibleColumns,
+        selectedDate,
+        availableClients,
+        onProgress: (current, total, clientName, projectName) => {
+          if (bulkExportCancelled) {
+            throw new Error('Export wurde abgebrochen');
+          }
+          
+          // Zeige Progress sofort wenn mehr als 3 PDFs zu generieren sind
+          if (total > 3) {
+            if (progressTimer) {
+              clearTimeout(progressTimer);
+              progressTimer = null;
+            }
+            
+            setBulkExportProgress({
+              isVisible: true,
+              current,
+              total,
+              clientName,
+              projectName: projectName || ''
+            });
+          }
+        }
+      });
+
+      // Clear timer falls noch aktiv
+      if (progressTimer) {
+        clearTimeout(progressTimer);
+        progressTimer = null;
+      }
+
+      if (!bulkExportCancelled && results.length > 0) {
+        await PDFExportService.downloadBulkAsZip(results, selectedDate);
+        
+        // Erfolgsmeldung ohne kompliziertes Overlay
+        alert(`🎉 Bulk-Export erfolgreich!\n\n${results.length} PDFs wurden generiert und heruntergeladen.`);
+      }
+    } catch (error) {
+      // Clear timer bei Fehler
+      if (progressTimer) {
+        clearTimeout(progressTimer);
+        progressTimer = null;
+      }
+      
+      console.error('Bulk-Export fehlgeschlagen:', error);
+      if (!bulkExportCancelled) {
+        alert('Fehler beim Bulk-Export. Bitte versuchen Sie es erneut.');
+      }
+    } finally {
+      setBulkExportProgress(prev => ({ ...prev, isVisible: false }));
+    }
+  };
+
+  const cancelBulkExport = () => {
+    setBulkExportCancelled(true);
+    setBulkExportProgress(prev => ({ ...prev, isVisible: false }));
+  };
+
   if (loading) {
     return (
       <div className={styles.loading}>
@@ -371,6 +469,13 @@ export const ReportView = () => {
         <div className={styles.headerButtons}>
           <button onClick={exportToPDF} className={styles.exportButton}>
             📄 PDF Export
+          </button>
+          <button 
+            onClick={exportAllToPDF} 
+            className={`${styles.exportButton} ${styles.bulkExportButton}`}
+            title="Generiert automatisch PDFs für alle Kunden und Projekte"
+          >
+            📦 Alle PDFs
           </button>
         </div>
       </div>
@@ -468,6 +573,16 @@ export const ReportView = () => {
           </span>
         )}
       </div>
+
+      {/* Bulk Export Progress Modal */}
+      <BulkExportProgress
+        isVisible={bulkExportProgress.isVisible}
+        current={bulkExportProgress.current}
+        total={bulkExportProgress.total}
+        clientName={bulkExportProgress.clientName}
+        projectName={bulkExportProgress.projectName}
+        onCancel={cancelBulkExport}
+      />
     </div>
   );
 }; 

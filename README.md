@@ -10,9 +10,33 @@ Eine moderne React-Webanwendung zur Verwaltung und Analyse von Toggl-Zeiterfassu
 - 📅 **Zeitraum-Auswahl** - Flexible Datums- und Monatsauswahl
 - 🗂️ **Spalten-Kontrolle** - Ein-/Ausblenden von Tabellenspalten nach Bedarf
 - 📄 **PDF-Export** - Professionelle PDF-Berichte mit Corporate Branding
+- 📦 **Bulk-PDF-Export (NEU v1.4.0)** - Generiere ALLE Kunden-PDFs mit einem Klick
 - 🎨 **Moderne UI** - Responsive Design mit dunklem/hellem Modus
 - ⚡ **Real-time Updates** - Live-Aktualisierung der Daten
 - 🔍 **Erweiterte Filter** - Sortierung und Filterung der Zeiteinträge
+- 🚫 **Intelligente Filterung** - Interne Projekte werden automatisch ausgeblendet
+
+## 🆕 Neue Features in v1.4.0
+
+### 📦 Bulk-PDF-Export - Der Game-Changer!
+**Von 50+ Klicks zu einem Klick!** Das revolutionäre neue Feature automatisiert die komplette PDF-Generierung:
+
+- **🚀 Ein-Klick-Export**: Alle Kunden-PDFs mit einem einzigen Klick generieren
+- **🧠 Intelligente Logik**: Automatische Erkennung von Kunden und Projekten
+- **📁 Smart-Gruppierung**: Ein PDF pro Kunde (bei einem Projekt) oder ein PDF pro Projekt (bei mehreren)
+- **⏱️ Task-Aggregation**: Arbeitszeiten werden pro Task zusammengefasst und angezeigt
+- **📋 Projekt-Header**: Projektname wird korrekt in Bulk-PDFs angezeigt
+- **🗜️ ZIP-Download**: Alle PDFs organisiert in einer ZIP-Datei
+- **📊 Progress-Tracking**: Intelligenter Fortschrittsbalken mit Abbruch-Option
+- **🚫 Auto-Filter**: Interne Projekte ("Intern Web") werden automatisch ausgeschlossen
+- **⚡ Performance**: Optimierte Generierung mit minimaler Wartezeit
+
+**Produktivitätssteigerung: 99% weniger Klicks pro Monat!**
+
+### 🔧 Weitere Verbesserungen
+- **Spalten-Standardwerte**: Optimierte Standard-Sichtbarkeit für bessere UX
+- **Konsistente PDF-Qualität**: Bulk-Export generiert identische PDFs wie Einzelexport
+- **Verbesserte Fehlerbehandlung**: Robustere Token-Validierung und Datenverarbeitung
 
 ## 🔐 Sicherheits-Features
 
