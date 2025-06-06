@@ -41,10 +41,10 @@ export const ReportView = () => {
     kunde: true,
     projekt: true,
     taetigkeit: true,
-    abrechenbar: true,
-    dauer: true,
-    gesamtstunden: false,
-    abrechenbareStunden: false,
+    abrechenbar: false, // Weniger relevant da wir Zeiten separat anzeigen
+    dauer: false, // Ersetzen durch spezifische Zeitwerte  
+    gesamtstunden: true,
+    abrechenbareStunden: true,
     tags: true
   });
 
@@ -119,13 +119,21 @@ export const ReportView = () => {
         if (groupedData.has(groupKey)) {
           const existing = groupedData.get(groupKey)!;
           
-          // Summiere die Dauer
-          const existingMinutes = parseTimeToMinutes(existing['Duration']);
-          const currentMinutes = parseTimeToMinutes(row['Duration']);
-          const totalMinutes = existingMinutes + currentMinutes;
+          // Summiere die Gesamtdauer
+          const existingTotalMinutes = parseTimeToMinutes(existing['Duration']);
+          const currentTotalMinutes = parseTimeToMinutes(row['Duration']);
+          const totalMinutes = existingTotalMinutes + currentTotalMinutes;
           
-          // Aktualisiere die Dauer
+          // Summiere die abrechenbare Zeit
+          const existingBillableMinutes = parseTimeToMinutes(existing['BillableTime'] || '0:00:00');
+          const currentBillableMinutes = (row['Billable'] === 'Yes' || row['Billable'] === 'Ja') 
+            ? parseTimeToMinutes(row['Duration']) 
+            : 0;
+          const billableMinutes = existingBillableMinutes + currentBillableMinutes;
+          
+          // Aktualisiere die Zeiten
           existing['Duration'] = formatMinutesToTime(totalMinutes);
+          existing['BillableTime'] = formatMinutesToTime(billableMinutes);
           
           // Für andere Felder: zeige "Verschiedene" wenn unterschiedlich
           if (existing['User'] !== row['User']) {
@@ -148,6 +156,11 @@ export const ReportView = () => {
           // Erste Zeile für diese Tätigkeit
           const newRow = { ...row };
           newRow['Description'] = ''; // Beschreibung leer lassen
+          
+          // Berechne abrechenbare Zeit für diese Zeile
+          const isBillable = row['Billable'] === 'Yes' || row['Billable'] === 'Ja';
+          newRow['BillableTime'] = isBillable ? row['Duration'] : '0:00:00';
+          
           groupedData.set(groupKey, newRow);
         }
       });
@@ -155,7 +168,14 @@ export const ReportView = () => {
       return Array.from(groupedData.values());
     }
     
-    return filtered;
+    // Für nicht-gruppierte Daten: Berechne abrechenbare Zeit für jede Zeile
+    return filtered.map(row => {
+      const isBillable = row['Billable'] === 'Yes' || row['Billable'] === 'Ja';
+      return {
+        ...row,
+        'BillableTime': isBillable ? row['Duration'] : '0:00:00'
+      };
+    });
   }, [reportData, selectedClient, selectedProject, shouldShowProjectFilter, columnVisibility.beschreibung]);
 
   // Erstelle Mapping zwischen deutschen Namen und Feldnamen
@@ -207,8 +227,8 @@ export const ReportView = () => {
   const dataWithVirtualColumns = useMemo(() => {
     return filteredData.map(row => ({
       ...row,
-      'TotalHours': '',  // Leer für normale Zeilen
-      'BillableHours': '' // Leer für normale Zeilen
+      'TotalHours': row['Duration'],  // Gesamtzeit = Dauer
+      'BillableHours': row['BillableTime'] || '0:00:00' // Abrechenbare Zeit
     }));
   }, [filteredData]);
 

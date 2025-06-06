@@ -26,10 +26,10 @@ const DEFAULT_VISIBILITY: ColumnVisibilityState = {
   kunde: true,
   projekt: true,
   taetigkeit: true,
-  abrechenbar: true,
-  dauer: true,
-  gesamtstunden: false,
-  abrechenbareStunden: false,
+  abrechenbar: false, // Weniger relevant da wir Zeiten separat anzeigen
+  dauer: false, // Ersetzen durch spezifische Zeitwerte
+  gesamtstunden: true,
+  abrechenbareStunden: true,
   tags: true
 };
 
@@ -42,6 +42,20 @@ export const ColumnVisibilityControl = ({ onVisibilityChange }: ColumnVisibility
   // Lade gespeicherte Einstellungen beim Mount
   useEffect(() => {
     const savedSettings = localStorage.getItem(STORAGE_KEY);
+    const versionKey = 'toggl-column-version';
+    const currentVersion = '1.2.0';
+    const savedVersion = localStorage.getItem(versionKey);
+    
+    // Prüfe ob eine neue Version vorliegt und setze Defaults
+    if (savedVersion !== currentVersion) {
+      console.log('Neue Version erkannt, setze Spalten-Defaults zurück');
+      localStorage.setItem(versionKey, currentVersion);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_VISIBILITY));
+      setVisibility(DEFAULT_VISIBILITY);
+      onVisibilityChange(DEFAULT_VISIBILITY);
+      return;
+    }
+    
     if (savedSettings) {
       try {
         const parsed = JSON.parse(savedSettings);
@@ -49,8 +63,11 @@ export const ColumnVisibilityControl = ({ onVisibilityChange }: ColumnVisibility
         onVisibilityChange(parsed);
       } catch (error) {
         console.warn('Fehler beim Laden der Spalten-Einstellungen:', error);
+        setVisibility(DEFAULT_VISIBILITY);
+        onVisibilityChange(DEFAULT_VISIBILITY);
       }
     } else {
+      setVisibility(DEFAULT_VISIBILITY);
       onVisibilityChange(DEFAULT_VISIBILITY);
     }
   }, [onVisibilityChange]);
@@ -81,8 +98,8 @@ export const ColumnVisibilityControl = ({ onVisibilityChange }: ColumnVisibility
     { key: 'taetigkeit' as const, label: 'Tätigkeit', icon: '⚡' },
     { key: 'abrechenbar' as const, label: 'Abrechenbar', icon: '💰' },
     { key: 'dauer' as const, label: 'Dauer', icon: '⏱️' },
-    { key: 'gesamtstunden' as const, label: 'Gesamtstunden', icon: '📊' },
-    { key: 'abrechenbareStunden' as const, label: 'Abrechenbare Stunden', icon: '💵' },
+    { key: 'gesamtstunden' as const, label: 'Gesamtzeit', icon: '📊' },
+    { key: 'abrechenbareStunden' as const, label: 'Abrechenbar (Zeit)', icon: '💵' },
     { key: 'tags' as const, label: 'Tags', icon: '🏷️' }
   ];
 
