@@ -3,6 +3,7 @@ import { TogglService } from '../services/togglService';
 import { REPORT_COLUMNS } from '../config/columns';
 import { ClientFilter } from './ClientFilter';
 import { ProjectFilter } from './ProjectFilter';
+import { ColumnVisibilityControl, ColumnVisibilityState } from './ColumnVisibilityControl';
 import styles from './ReportView.module.css';
 
 interface ReportData {
@@ -15,6 +16,17 @@ export const ReportView = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedClient, setSelectedClient] = useState<string>('Alle Kunden');
   const [selectedProject, setSelectedProject] = useState<string>('Alle Projekte');
+  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibilityState>({
+    teammitglieder: true,
+    beschreibung: true,
+    datum: true,
+    kunde: true,
+    projekt: true,
+    taetigkeit: true,
+    abrechenbar: true,
+    dauer: true,
+    tags: true
+  });
 
   const loadReport = async () => {
     setLoading(true);
@@ -112,8 +124,27 @@ export const ReportView = () => {
     );
   }
 
-  // Filtere nur die sichtbaren Spalten
-  const visibleColumns = REPORT_COLUMNS.filter(col => col.visible);
+  // Erstelle Mapping zwischen deutschen Namen und Feldnamen
+  const columnMapping = {
+    teammitglieder: 'User',
+    kunde: 'Client', 
+    projekt: 'Project',
+    taetigkeit: 'Task',
+    beschreibung: 'Description',
+    abrechenbar: 'Billable',
+    datum: 'Start date',
+    dauer: 'Duration',
+    tags: 'Tags'
+  };
+
+  // Filtere die sichtbaren Spalten basierend auf der Benutzerauswahl
+  const visibleColumns = REPORT_COLUMNS.filter(col => {
+    const germanKey = Object.keys(columnMapping).find(
+      key => columnMapping[key as keyof typeof columnMapping] === col.field
+    ) as keyof ColumnVisibilityState;
+    
+    return germanKey ? columnVisibility[germanKey] : col.visible;
+  });
 
   return (
     <div className={styles.container}>
@@ -123,6 +154,10 @@ export const ReportView = () => {
           Aktualisieren
         </button>
       </div>
+
+      <ColumnVisibilityControl
+        onVisibilityChange={setColumnVisibility}
+      />
 
       {availableClients.length > 0 && (
         <ClientFilter
