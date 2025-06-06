@@ -49,6 +49,10 @@ export class PDFExportService {
       console.warn('Logo konnte nicht geladen werden:', error);
     }
     
+    // Prüfe, ob nur ein Projekt in den Daten vorkommt
+    const uniqueProjects = new Set(data.map(row => row.project || row.Project || '').filter(p => p));
+    const hasOnlyOneProject = uniqueProjects.size <= 1;
+    
     // Header-Informationen
     const monthYear = `${MONTH_NAMES[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`;
     const clientName = selectedClient === 'Alle Kunden' ? 'Alle Kunden' : selectedClient;
@@ -59,20 +63,31 @@ export class PDFExportService {
     doc.setFont('helvetica', 'bold');
     doc.text(`Tätigkeitsnachweis für ${monthYear}`, 20, 25);
     
-    // Kunden- und Projektinformationen
+    // Kunden-Informationen
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
     doc.text(`Kunde: ${clientName}`, 20, 35);
-    doc.text(`Projekt: ${projectName}`, 20, 42);
+    
+    // Projekt-Information nur bei mehreren Projekten
+    let headerHeight = 42;
+    if (!hasOnlyOneProject) {
+      doc.text(`Projekt: ${projectName}`, 20, 42);
+      headerHeight = 49;
+    }
+    
+    // Spalten filtern - Projekt-Spalte entfernen wenn nur ein Projekt
+    const filteredColumns = hasOnlyOneProject 
+      ? columns.filter(col => col.field !== 'project' && col.field !== 'Project')
+      : columns;
     
     // Tabellen-Header und -Daten vorbereiten
-    const tableColumns = columns.map(col => col.header);
+    const tableColumns = filteredColumns.map(col => col.header);
     const tableData = data.map(row => 
-      columns.map(col => row[col.field] || '')
+      filteredColumns.map(col => row[col.field] || '')
     );
     
     // Summary-Zeile hinzufügen
-    const summaryRow = columns.map(col => {
+    const summaryRow = filteredColumns.map(col => {
       switch (col.field) {
         case 'task':
         case 'Task':
@@ -93,7 +108,7 @@ export class PDFExportService {
     autoTable(doc, {
       head: [tableColumns],
       body: tableData,
-      startY: 55,
+      startY: headerHeight + 6,
       styles: {
         fontSize: 9,
         cellPadding: 3,
