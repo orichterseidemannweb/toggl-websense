@@ -5,7 +5,7 @@ Alle bemerkenswerten Änderungen an diesem Projekt werden in dieser Datei dokume
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.1] - 2024-12-22
+## [1.4.1] - 2025-06-06
 
 ### 🛠️ Behoben
 - **Overlay-Problem gelöst**: Progress-Overlay für Bulk-Export komplett entfernt
@@ -22,7 +22,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - Übersichtliche Abschlussmeldung nach erfolgreichem Export bleibt erhalten
 - Weniger UI-Komplexität = mehr Stabilität = bessere User Experience
 
-## [1.4.0] - 2024-12-22
+## [1.4.0] - 2025-06-06
 
 ### 🚀 Neu - Revolutionary Bulk PDF Export
 - **📦 Ein-Klick-Export**: Alle Kunden-PDFs mit einem einzigen Klick generieren
