@@ -5,6 +5,27 @@ Alle bemerkenswerten Änderungen an diesem Projekt werden in dieser Datei dokume
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.2] - 2025-06-06
+
+### 🎨 UI-Verbesserungen
+- **✨ Footer-Redesign**: Komplett überarbeitete Footer-Sektion mit modernem Bubble-Design
+- **🗑️ UI-Entrümpelung**: Redundante Informationen entfernt (Einträge-Anzahl, doppelte Filter-Anzeigen)
+- **🎯 Fokussierte Anzeige**: Nur noch relevante Status-Informationen (Gruppierung, Abrechenbarkeit, etc.)
+- **🌈 Intelligente Farbkodierung**: Verschiedene Farben für verschiedene Info-Typen
+
+### 💎 Design-Features
+- **Glasmorphism-Bubbles**: Moderne durchscheinende Optik mit backdrop-filter
+- **Hover-Animationen**: Subtile Transformationen und Schatten-Effekte
+- **Responsive Design**: Automatisches Wrapping der Bubbles bei kleinen Bildschirmen
+- **Konsistente Typografie**: Einheitliche Schriftgrößen und -gewichte
+
+### 🔧 Technische Verbesserungen
+- **CSS-Optimierung**: Entfernung ungenutzter Klassen und Vereinfachung der Styles
+- **Modulares Design**: Wiederverwendbare Bubble-Komponenten mit Farb-Varianten
+- **Performance**: Weniger DOM-Elemente durch Entfernung redundanter Anzeigen
+
+**User Experience**: Deutlich sauberere und übersichtlichere Interface ohne visuellen Ballast
+
 ## [1.4.1] - 2025-06-06
 
 ### 🛠️ Behoben

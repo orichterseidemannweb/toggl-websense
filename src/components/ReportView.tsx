@@ -484,39 +484,25 @@ export const ReportView = () => {
         </table>
       </div>
 
-      <div className={styles.filterSummary}>
-        Zeige {filteredData.length} von {reportData.length} Einträgen
-        <span className={styles.filterIndicator}>
-          • Zeitraum: {['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'][selectedDate.getMonth()]} {selectedDate.getFullYear()}
-        </span>
-        {selectedClient !== 'Kunde auswählen' && (
-          <span className={styles.filterIndicator}>
-            • Kunde: {selectedClient}
-          </span>
-        )}
-        {selectedProject !== 'Projekt auswählen' && shouldShowProjectFilter && (
-          <span className={styles.filterIndicator}>
-            • Projekt: {selectedProject}
-          </span>
-        )}
+      <div className={styles.reportFooter}>
         {selectedClient !== 'Kunde auswählen' && availableProjects.length <= 1 && columnVisibility.projekt && (
-          <span className={styles.filterIndicator}>
-            • 📋 Projekt-Spalte automatisch ausgeblendet (nur ein Projekt)
+          <span className={`${styles.infoBubble} ${styles.infoBubblePurple}`}>
+            📋 Projekt-Spalte automatisch ausgeblendet
           </span>
         )}
         {!columnVisibility.beschreibung && reportData.length > 0 && (
-          <span className={styles.groupingIndicator}>
-            • 📊 Tätigkeiten gruppiert (Zeiten summiert)
+          <span className={`${styles.infoBubble} ${styles.infoBubbleGreen}`}>
+            📊 Tätigkeiten gruppiert
           </span>
         )}
         {summaryStats.allBillable && summaryStats.totalMinutes > 0 && (
-          <span className={styles.billingIndicator}>
-            • ✅ Alle Zeiten abrechenbar
+          <span className={`${styles.infoBubble} ${styles.infoBubbleSuccess}`}>
+            ✅ Alle Zeiten abrechenbar
           </span>
         )}
         {!summaryStats.allBillable && summaryStats.totalMinutes > 0 && (
-          <span className={styles.billingIndicator}>
-            • ⚠️ Gemischte Zeiten (abrechenbar/nicht-abrechenbar)
+          <span className={`${styles.infoBubble} ${styles.infoBubbleWarning}`}>
+            ⚠️ Gemischte Zeiten
           </span>
         )}
       </div>
