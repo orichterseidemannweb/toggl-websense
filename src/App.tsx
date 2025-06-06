@@ -3,7 +3,7 @@ import styles from './App.module.css'
 import Login from './components/Login'
 import { StatusBar } from './components/StatusBar'
 import { TogglService } from './services/togglService'
-import { DebugInfo } from './components/DebugInfo'
+// import { DebugInfo } from './components/DebugInfo'
 import { ReportView } from './components/ReportView'
 
 function App() {
@@ -11,15 +11,15 @@ function App() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log('App gestartet, initialisiere Toggl');
+    // console.log('App gestartet, initialisiere Toggl');
     initializeToggl();
   }, []);
 
   const initializeToggl = async () => {
     try {
-      console.log('Starte Toggl-Initialisierung');
+      // console.log('Starte Toggl-Initialisierung');
       const success = await TogglService.initialize();
-      console.log('Toggl-Initialisierung Ergebnis:', success);
+      // console.log('Toggl-Initialisierung Ergebnis:', success);
       setIsAuthenticated(success);
       if (!success) {
         setError('API-Token nicht gefunden oder ungültig');
@@ -33,9 +33,9 @@ function App() {
 
   const handleTokenChange = async (token: string) => {
     try {
-      console.log('Versuche Token zu setzen');
+      // console.log('Versuche Token zu setzen');
       const success = await TogglService.setApiToken(token);
-      console.log('Token setzen Ergebnis:', success);
+      // console.log('Token setzen Ergebnis:', success);
       setIsAuthenticated(success);
       if (!success) {
         setError('Verbindung mit dem Token fehlgeschlagen');
@@ -69,7 +69,7 @@ function App() {
           )}
         </main>
       </div>
-      <DebugInfo />
+      {/* <DebugInfo /> */}
     </div>
   )
 }
