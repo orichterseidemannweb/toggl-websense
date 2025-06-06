@@ -5,6 +5,7 @@ import { ClientFilter } from './ClientFilter';
 import { ProjectFilter } from './ProjectFilter';
 import { ColumnVisibilityControl, ColumnVisibilityState } from './ColumnVisibilityControl';
 import { MonthSelector } from './MonthSelector';
+import { PDFExportService } from '../services/pdfExportService';
 import styles from './ReportView.module.css';
 
 interface ReportData {
@@ -294,6 +295,22 @@ export const ReportView = () => {
     loadReport();
   }, [selectedDate]);
 
+  const exportToPDF = async () => {
+    try {
+      await PDFExportService.generateActivityReport({
+        data: dataWithVirtualColumns,
+        columns: visibleColumns,
+        selectedClient,
+        selectedProject,
+        selectedDate,
+        summaryStats
+      });
+    } catch (error) {
+      console.error('PDF-Export fehlgeschlagen:', error);
+      alert('Fehler beim Erstellen des PDF-Exports. Bitte versuchen Sie es erneut.');
+    }
+  };
+
   if (loading) {
     return (
       <div className={styles.loading}>
@@ -326,9 +343,14 @@ export const ReportView = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <h2>Zeiterfassungsbericht</h2>
-        <button onClick={loadReport} className={styles.refreshButton}>
-          Aktualisieren
-        </button>
+        <div className={styles.headerButtons}>
+          <button onClick={loadReport} className={styles.refreshButton}>
+            Aktualisieren
+          </button>
+          <button onClick={exportToPDF} className={styles.exportButton}>
+            📄 PDF Export
+          </button>
+        </div>
       </div>
 
       <ColumnVisibilityControl
