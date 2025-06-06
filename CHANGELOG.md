@@ -5,7 +5,7 @@ Alle bemerkenswerten Änderungen an diesem Projekt werden in dieser Datei dokume
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.5.0] - 2025-01-06
+## [1.5.0] - 2025-06-06
 
 ### ✨ Major UI Redesign: Vollständiges Bubble-Design-System
 
@@ -100,7 +100,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - Progress-Overlay-System implementiert
 - Optimierte PDF-Generierung Pipeline
 
-## [1.2.3] - 2024-12-17
+## [1.2.3] - 2025-06-06
 
 ### 🎨 Geändert
 - Logo-Position im PDF-Export optimiert - jetzt rechtsbündig mit der Tabelle ausgerichtet
@@ -109,7 +109,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ### 🔧 Technisch
 - PDF-Export-Service: Logo-Positionierung von 10mm auf 20mm rechter Rand angepasst
 
-## [1.2.2] - 2024-12-17
+## [1.2.2] - 2025-06-06
 
 ### ✨ Neu
 - Vollständige PDF-Export-Funktionalität implementiert
@@ -127,13 +127,13 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - PDFExportService erstellt mit umfassender Export-Logik
 - Logo-Laden mit Canvas-Konvertierung implementiert
 
-## [1.2.1] - 2024-12-17
+## [1.2.1] - 2025-06-06
 
 ### 🐛 Behoben
 - Performance-Optimierungen bei der Datenverarbeitung
 - Verbesserte Fehlerbehandlung bei API-Aufrufen
 
-## [1.2.0] - 2024-12-17
+## [1.2.0] - 2025-06-06
 
 ### ✨ Neu
 - Spalten-Sichtbarkeits-Kontrolle implementiert
@@ -149,7 +149,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - ColumnVisibilityControl Komponente erstellt
 - LocalStorage Integration für Benutzereinstellungen
 
-## [1.1.4] - 2024-12-17
+## [1.1.4] - 2025-06-06
 
 ### ✨ Neu
 - PDF-Export Grundfunktionalität begonnen
@@ -158,7 +158,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ### 🔧 Technisch
 - PDF-Dependencies installiert und konfiguriert
 
-## [1.1.3] - 2024-12-17
+## [1.1.3] - 2025-06-06
 
 ### 🎨 Geändert
 - MonthSelector UI-Verbesserungen
@@ -167,19 +167,19 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ### 🔧 Technisch
 - MonthSelector Komponente optimiert
 
-## [1.1.2] - 2024-12-17
+## [1.1.2] - 2025-06-06
 
 ### 🐛 Behoben
 - Kleinere Bugfixes und Stabilitätsverbesserungen
 - UI-Polish
 
-## [1.1.1] - 2024-12-17
+## [1.1.1] - 2025-06-06
 
 ### 🐛 Behoben
 - Build-Probleme behoben
 - Entwicklungsumgebung stabilisiert
 
-## [1.1.0] - 2024-12-17
+## [1.1.0] - 2025-06-06
 
 ### ✨ Neu
 - Erweiterte Filterfunktionalität
@@ -190,7 +190,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - UI-Components überarbeitet
 - Bessere Benutzerführung
 
-## [1.0.8] - 2024-12-17
+## [1.0.8] - 2025-06-06
 
 ### 🎨 Geändert
 - App-Interface Überarbeitung
@@ -199,7 +199,7 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ### 🔧 Technisch
 - App.tsx umfangreiche Refaktorierung
 
-## [1.0.7] - 2024-12-17
+## [1.0.7] - 2025-06-06
 
 ### ✨ Neu
 - ColumnVisibilityControl Komponente hinzugefügt
@@ -208,25 +208,25 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ### 🎨 Geändert
 - ReportView erweiterte Funktionalität
 
-## [1.0.6] - 2024-12-17
+## [1.0.6] - 2025-06-06
 
 ### 🐛 Behoben
 - ReportView Bugfixes und Optimierungen
 - Stabilere Datenverarbeitung
 
-## [1.0.5] - 2024-12-17
+## [1.0.5] - 2025-06-06
 
 ### 🎨 Geändert
 - ReportView UI-Verbesserungen
 - Tabellendarstellung optimiert
 
-## [1.0.4] - 2024-12-17
+## [1.0.4] - 2025-06-06
 
 ### 🔧 Technisch
 - Verbesserte Umgebungsvariablen-Verwaltung
 - Konfigurationssystem überarbeitet
 
-## [1.0.3] - 2024-12-17
+## [1.0.3] - 2025-06-06
 
 ### ✨ Neu
 - Initiale Toggl API Integration
@@ -236,19 +236,19 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - TogglService erstellt
 - API-Token Management
 
-## [1.0.2] - 2024-12-17
+## [1.0.2] - 2025-06-06
 
 ### 🎨 Geändert
 - UI-Framework Setup
 - Grundlegendes Styling implementiert
 
-## [1.0.1] - 2024-12-17
+## [1.0.1] - 2025-06-06
 
 ### 🔧 Technisch
 - Projekt-Setup und Konfiguration
 - Build-System etabliert
 
-## [1.0.0] - 2024-12-17
+## [1.0.0] - 2025-06-06
 
 ### ✨ Neu
 - Erstes Release der Toggl WebSense Anwendung
