@@ -20,9 +20,9 @@ export interface ColumnVisibilityState {
 }
 
 const DEFAULT_VISIBILITY: ColumnVisibilityState = {
-  teammitglieder: true,
-  beschreibung: true,
-  datum: true,
+  teammitglieder: false, // Standardmäßig deaktiviert
+  beschreibung: false,   // Standardmäßig deaktiviert  
+  datum: false,          // Standardmäßig deaktiviert
   kunde: true,
   projekt: true,
   taetigkeit: true,
@@ -30,7 +30,7 @@ const DEFAULT_VISIBILITY: ColumnVisibilityState = {
   dauer: false, // Ersetzen durch spezifische Zeitwerte
   gesamtstunden: true,
   abrechenbareStunden: true,
-  tags: true
+  tags: false // Standardmäßig deaktiviert
 };
 
 const STORAGE_KEY = 'toggl-column-visibility';
@@ -43,7 +43,7 @@ export const ColumnVisibilityControl = ({ onVisibilityChange }: ColumnVisibility
   useEffect(() => {
     const savedSettings = localStorage.getItem(STORAGE_KEY);
     const versionKey = 'toggl-column-version';
-    const currentVersion = '1.2.0';
+    const currentVersion = '1.3.2';
     const savedVersion = localStorage.getItem(versionKey);
     
     // Prüfe ob eine neue Version vorliegt und setze Defaults
@@ -152,15 +152,7 @@ export const ColumnVisibilityControl = ({ onVisibilityChange }: ColumnVisibility
             ))}
           </div>
           
-          <div className={styles.actions}>
-            <button 
-              onClick={resetToDefaults}
-              className={styles.resetButton}
-            >
-              <span className={styles.resetIcon}>🔄</span>
-              Alle anzeigen
-            </button>
-          </div>
+
         </div>
       )}
     </div>

@@ -34,25 +34,25 @@ export const ReportView = () => {
   const [reportData, setReportData] = useState<ReportData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedClient, setSelectedClient] = useState<string>('Alle Kunden');
-  const [selectedProject, setSelectedProject] = useState<string>('Alle Projekte');
+  const [selectedClient, setSelectedClient] = useState<string>('Kunde auswählen');
+  const [selectedProject, setSelectedProject] = useState<string>('Projekt auswählen');
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
     // Standard: aktueller Monat
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
   const [columnVisibility, setColumnVisibility] = useState<ColumnVisibilityState>({
-    teammitglieder: true,
-    beschreibung: true,
-    datum: true,
+    teammitglieder: false, // Standardmäßig deaktiviert
+    beschreibung: false,   // Standardmäßig deaktiviert
+    datum: false,          // Standardmäßig deaktiviert
     kunde: true,
     projekt: true,
     taetigkeit: true,
     abrechenbar: false, // Weniger relevant da wir Zeiten separat anzeigen
-    dauer: false, // Ersetzen durch spezifische Zeitwerte  
+    dauer: false, // Ersetzen durch spezifische Zeitwerte
     gesamtstunden: true,
     abrechenbareStunden: true,
-    tags: true
+    tags: false // Standardmäßig deaktiviert
   });
 
   const loadReport = async () => {
@@ -96,17 +96,17 @@ export const ReportView = () => {
   }, [reportData, selectedClient]);
 
   // Zeige Projektfilter nur wenn ein spezifischer Kunde ausgewählt ist und mehr als ein Projekt existiert
-  const shouldShowProjectFilter = selectedClient !== 'Alle Kunden' && availableProjects.length > 1;
+  const shouldShowProjectFilter = selectedClient !== 'Kunde auswählen' && availableProjects.length > 1;
 
   // Filtere und gruppiere die Daten basierend auf dem ausgewählten Kunden und Projekt
   const filteredData = useMemo(() => {
     let filtered = reportData;
     
-    if (selectedClient !== 'Alle Kunden') {
+    if (selectedClient !== 'Kunde auswählen') {
       filtered = filtered.filter(row => row['Client'] === selectedClient);
     }
     
-    if (selectedProject !== 'Alle Projekte' && shouldShowProjectFilter) {
+    if (selectedProject !== 'Projekt auswählen' && shouldShowProjectFilter) {
       filtered = filtered.filter(row => row['Project'] === selectedProject);
     }
 
@@ -245,9 +245,17 @@ export const ReportView = () => {
         col.header = 'Abrechenbar';
       }
     }
+
+    // Intelligente Projekt-Spalten-Logik: Verstecke Projekt-Spalte wenn Kunde nur ein Projekt hat
+    if (col.field === 'Project') {
+      // Nur ausblenden wenn ein spezifischer Kunde ausgewählt ist und er nur ein Projekt hat
+      if (selectedClient !== 'Kunde auswählen' && availableProjects.length <= 1) {
+        return false;
+      }
+    }
     
     return germanKey ? columnVisibility[germanKey] : col.visible;
-  }), [columnVisibility, summaryStats.allBillable]);
+  }), [columnVisibility, summaryStats.allBillable, selectedClient, availableProjects.length]);
 
   // Erstelle Datenzeilen mit virtuellen Spalten für die Zusammenfassung
   const dataWithVirtualColumns = useMemo(() => {
@@ -288,12 +296,25 @@ export const ReportView = () => {
 
   // Reset Projekt-Auswahl wenn ein neuer Kunde ausgewählt wird
   useEffect(() => {
-    setSelectedProject('Alle Projekte');
+    setSelectedProject('Projekt auswählen');
   }, [selectedClient]);
 
+  // Auto-load Report beim Mount und bei Datumsänderungen
   useEffect(() => {
     loadReport();
   }, [selectedDate]);
+
+  // Initial Load beim ersten Rendern
+  useEffect(() => {
+    // Kleiner Delay um sicherzustellen dass TogglService bereit ist
+    const timer = setTimeout(() => {
+      if (reportData.length === 0 && !loading && !error) {
+        loadReport();
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const exportToPDF = async () => {
     try {
@@ -344,9 +365,6 @@ export const ReportView = () => {
       <div className={styles.header}>
         <h2>Zeiterfassungsbericht</h2>
         <div className={styles.headerButtons}>
-          <button onClick={loadReport} className={styles.refreshButton}>
-            Aktualisieren
-          </button>
           <button onClick={exportToPDF} className={styles.exportButton}>
             📄 PDF Export
           </button>
@@ -415,14 +433,19 @@ export const ReportView = () => {
         <span className={styles.filterIndicator}>
           • Zeitraum: {['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'][selectedDate.getMonth()]} {selectedDate.getFullYear()}
         </span>
-        {selectedClient !== 'Alle Kunden' && (
+        {selectedClient !== 'Kunde auswählen' && (
           <span className={styles.filterIndicator}>
             • Kunde: {selectedClient}
           </span>
         )}
-        {selectedProject !== 'Alle Projekte' && shouldShowProjectFilter && (
+        {selectedProject !== 'Projekt auswählen' && shouldShowProjectFilter && (
           <span className={styles.filterIndicator}>
             • Projekt: {selectedProject}
+          </span>
+        )}
+        {selectedClient !== 'Kunde auswählen' && availableProjects.length <= 1 && columnVisibility.projekt && (
+          <span className={styles.filterIndicator}>
+            • 📋 Projekt-Spalte automatisch ausgeblendet (nur ein Projekt)
           </span>
         )}
         {!columnVisibility.beschreibung && reportData.length > 0 && (

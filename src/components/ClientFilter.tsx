@@ -11,7 +11,7 @@ export const ClientFilter = ({ clients, selectedClient, onFilterChange }: Client
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const allClients = ['Alle Kunden', ...clients];
+  const allClients = ['Kunde auswählen', ...clients];
   
   const filteredClients = allClients.filter(client => 
     client.toLowerCase().includes(searchTerm.toLowerCase())
@@ -38,17 +38,13 @@ export const ClientFilter = ({ clients, selectedClient, onFilterChange }: Client
 
   return (
     <div className={`${styles.clientFilter} client-filter`}>
-      <div className={styles.filterHeader}>
-        <span className={styles.filterLabel}>Kunde auswählen</span>
-      </div>
-
       <div className={styles.dropdownContainer}>
         <button
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           className={styles.dropdownButton}
         >
           <span className={styles.dropdownText}>
-            {selectedClient || 'Alle Kunden'}
+            {selectedClient === 'Alle Kunden' ? 'Kunde auswählen' : selectedClient || 'Kunde auswählen'}
           </span>
           <svg 
             className={`${styles.dropdownIcon} ${isDropdownOpen ? styles.rotated : ''}`}
@@ -78,11 +74,11 @@ export const ClientFilter = ({ clients, selectedClient, onFilterChange }: Client
                   key={client}
                   onClick={() => handleClientSelect(client)}
                   className={`${styles.clientItem} ${
-                    (selectedClient || 'Alle Kunden') === client ? styles.selected : ''
+                    (selectedClient === 'Alle Kunden' ? 'Kunde auswählen' : selectedClient || 'Kunde auswählen') === client ? styles.selected : ''
                   }`}
                 >
                   <span className={styles.clientName}>{client}</span>
-                  {(selectedClient || 'Alle Kunden') === client && (
+                  {(selectedClient === 'Alle Kunden' ? 'Kunde auswählen' : selectedClient || 'Kunde auswählen') === client && (
                     <svg className={styles.checkIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>

@@ -12,7 +12,7 @@ export const ProjectFilter = ({ projects, selectedProject, onFilterChange, clien
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const allProjects = ['Alle Projekte', ...projects];
+  const allProjects = ['Projekt auswählen', ...projects];
   
   const filteredProjects = allProjects.filter(project => 
     project.toLowerCase().includes(searchTerm.toLowerCase())
@@ -39,20 +39,13 @@ export const ProjectFilter = ({ projects, selectedProject, onFilterChange, clien
 
   return (
     <div className={`${styles.projectFilter} project-filter`}>
-      <div className={styles.filterHeader}>
-        <span className={styles.filterLabel}>
-          Projekt auswählen
-          <span className={styles.clientContext}>für {clientName}</span>
-        </span>
-      </div>
-
       <div className={styles.dropdownContainer}>
         <button
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           className={styles.dropdownButton}
         >
           <span className={styles.dropdownText}>
-            {selectedProject || 'Alle Projekte'}
+            {selectedProject === 'Alle Projekte' ? `Projekt auswählen (${clientName})` : selectedProject || `Projekt auswählen (${clientName})`}
           </span>
           <svg 
             className={`${styles.dropdownIcon} ${isDropdownOpen ? styles.rotated : ''}`}
@@ -82,11 +75,11 @@ export const ProjectFilter = ({ projects, selectedProject, onFilterChange, clien
                   key={project}
                   onClick={() => handleProjectSelect(project)}
                   className={`${styles.projectItem} ${
-                    (selectedProject || 'Alle Projekte') === project ? styles.selected : ''
+                    (selectedProject === 'Alle Projekte' ? 'Projekt auswählen' : selectedProject || 'Projekt auswählen') === project ? styles.selected : ''
                   }`}
                 >
                   <span className={styles.projectName}>{project}</span>
-                  {(selectedProject || 'Alle Projekte') === project && (
+                  {(selectedProject === 'Alle Projekte' ? 'Projekt auswählen' : selectedProject || 'Projekt auswählen') === project && (
                     <svg className={styles.checkIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
