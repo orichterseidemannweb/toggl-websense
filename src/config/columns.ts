@@ -13,5 +13,7 @@ export const REPORT_COLUMNS: ColumnDefinition[] = [
   { field: 'Billable', header: 'Abrechenbar', visible: true },
   { field: 'Start date', header: 'Datum', visible: true },
   { field: 'Duration', header: 'Dauer', visible: true },
+  { field: 'TotalHours', header: 'Gesamtstunden', visible: true },
+  { field: 'BillableHours', header: 'Abrechenbare Stunden', visible: true },
   { field: 'Tags', header: 'Tags', visible: true }
 ]; 

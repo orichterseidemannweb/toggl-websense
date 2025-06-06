@@ -130,4 +130,28 @@
   padding: 2px 8px;
   border-radius: 8px;
   border: 1px solid rgba(124, 58, 237, 0.2);
+}
+
+.summaryRow {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-top: 2px solid #3b82f6;
+  font-weight: 600;
+}
+
+.summaryRow:hover {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+.summaryCell {
+  padding: 16px !important;
+  color: #1e40af;
+  font-weight: 700;
+  border-bottom: none !important;
+  font-size: 0.9rem;
+  letter-spacing: -0.01em;
+}
+
+.summaryCell:first-child {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.1) 100%);
+  border-radius: 8px 0 0 8px;
 } 

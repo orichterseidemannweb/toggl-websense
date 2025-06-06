@@ -14,6 +14,8 @@ export interface ColumnVisibilityState {
   taetigkeit: boolean;
   abrechenbar: boolean;
   dauer: boolean;
+  gesamtstunden: boolean;
+  abrechenbareStunden: boolean;
   tags: boolean;
 }
 
@@ -26,6 +28,8 @@ const DEFAULT_VISIBILITY: ColumnVisibilityState = {
   taetigkeit: true,
   abrechenbar: true,
   dauer: true,
+  gesamtstunden: false,
+  abrechenbareStunden: false,
   tags: true
 };
 
@@ -77,6 +81,8 @@ export const ColumnVisibilityControl = ({ onVisibilityChange }: ColumnVisibility
     { key: 'taetigkeit' as const, label: 'Tätigkeit', icon: '⚡' },
     { key: 'abrechenbar' as const, label: 'Abrechenbar', icon: '💰' },
     { key: 'dauer' as const, label: 'Dauer', icon: '⏱️' },
+    { key: 'gesamtstunden' as const, label: 'Gesamtstunden', icon: '📊' },
+    { key: 'abrechenbareStunden' as const, label: 'Abrechenbare Stunden', icon: '💵' },
     { key: 'tags' as const, label: 'Tags', icon: '🏷️' }
   ];
 
@@ -92,7 +98,7 @@ export const ColumnVisibilityControl = ({ onVisibilityChange }: ColumnVisibility
           <div className={styles.headerContent}>
             <span className={styles.icon}>⚙️</span>
             <span className={styles.title}>Spalten anzeigen</span>
-            <span className={styles.counter}>({visibleCount}/9)</span>
+            <span className={styles.counter}>({visibleCount}/11)</span>
           </div>
           <svg 
             className={`${styles.chevron} ${isExpanded ? styles.expanded : ''}`}

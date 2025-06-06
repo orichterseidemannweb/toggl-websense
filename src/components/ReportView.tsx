@@ -10,6 +10,24 @@ interface ReportData {
   [key: string]: string;
 }
 
+// Hilfsfunktion zum Konvertieren von Zeitdauer-Strings (HH:MM:SS) zu Minuten
+const parseTimeToMinutes = (timeStr: string): number => {
+  if (!timeStr || timeStr === '-') return 0;
+  const parts = timeStr.split(':');
+  if (parts.length === 3) {
+    return parseInt(parts[0]) * 60 + parseInt(parts[1]) + parseInt(parts[2]) / 60;
+  }
+  return 0;
+};
+
+// Hilfsfunktion zum Konvertieren von Minuten zurück zu HH:MM:SS Format
+const formatMinutesToTime = (minutes: number): string => {
+  const hours = Math.floor(minutes / 60);
+  const mins = Math.floor(minutes % 60);
+  const secs = Math.floor((minutes % 1) * 60);
+  return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+};
+
 export const ReportView = () => {
   const [reportData, setReportData] = useState<ReportData[]>([]);
   const [loading, setLoading] = useState(false);
@@ -25,6 +43,8 @@ export const ReportView = () => {
     taetigkeit: true,
     abrechenbar: true,
     dauer: true,
+    gesamtstunden: false,
+    abrechenbareStunden: false,
     tags: true
   });
 
@@ -71,24 +91,6 @@ export const ReportView = () => {
 
   // Zeige Projektfilter nur wenn ein spezifischer Kunde ausgewählt ist und mehr als ein Projekt existiert
   const shouldShowProjectFilter = selectedClient !== 'Alle Kunden' && availableProjects.length > 1;
-
-  // Hilfsfunktion zum Konvertieren von Zeitdauer-Strings (HH:MM:SS) zu Minuten
-  const parseTimeToMinutes = (timeStr: string): number => {
-    if (!timeStr || timeStr === '-') return 0;
-    const parts = timeStr.split(':');
-    if (parts.length === 3) {
-      return parseInt(parts[0]) * 60 + parseInt(parts[1]) + parseInt(parts[2]) / 60;
-    }
-    return 0;
-  };
-
-  // Hilfsfunktion zum Konvertieren von Minuten zurück zu HH:MM:SS Format
-  const formatMinutesToTime = (minutes: number): string => {
-    const hours = Math.floor(minutes / 60);
-    const mins = Math.floor(minutes % 60);
-    const secs = Math.floor((minutes % 1) * 60);
-    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
 
   // Filtere und gruppiere die Daten basierend auf dem ausgewählten Kunden und Projekt
   const filteredData = useMemo(() => {
@@ -156,6 +158,87 @@ export const ReportView = () => {
     return filtered;
   }, [reportData, selectedClient, selectedProject, shouldShowProjectFilter, columnVisibility.beschreibung]);
 
+  // Erstelle Mapping zwischen deutschen Namen und Feldnamen
+  const columnMapping = {
+    teammitglieder: 'User',
+    kunde: 'Client', 
+    projekt: 'Project',
+    taetigkeit: 'Task',
+    beschreibung: 'Description',
+    abrechenbar: 'Billable',
+    datum: 'Start date',
+    dauer: 'Duration',
+    gesamtstunden: 'TotalHours',
+    abrechenbareStunden: 'BillableHours',
+    tags: 'Tags'
+  };
+
+  // Filtere die sichtbaren Spalten basierend auf der Benutzerauswahl
+  const visibleColumns = useMemo(() => REPORT_COLUMNS.filter(col => {
+    const germanKey = Object.keys(columnMapping).find(
+      key => columnMapping[key as keyof typeof columnMapping] === col.field
+    ) as keyof ColumnVisibilityState;
+    
+    return germanKey ? columnVisibility[germanKey] : col.visible;
+  }), [columnVisibility]);
+
+  // Berechne Zusammenfassungsstatistiken
+  const summaryStats = useMemo(() => {
+    let totalMinutes = 0;
+    let billableMinutes = 0;
+
+    filteredData.forEach(row => {
+      const duration = parseTimeToMinutes(row['Duration'] || '');
+      totalMinutes += duration;
+      
+      if (row['Billable'] === 'Yes' || row['Billable'] === 'Ja') {
+        billableMinutes += duration;
+      }
+    });
+
+    return {
+      totalHours: formatMinutesToTime(totalMinutes),
+      billableHours: formatMinutesToTime(billableMinutes),
+      totalEntries: filteredData.length
+    };
+  }, [filteredData]);
+
+  // Erstelle Datenzeilen mit virtuellen Spalten für die Zusammenfassung
+  const dataWithVirtualColumns = useMemo(() => {
+    return filteredData.map(row => ({
+      ...row,
+      'TotalHours': '',  // Leer für normale Zeilen
+      'BillableHours': '' // Leer für normale Zeilen
+    }));
+  }, [filteredData]);
+
+  // Erstelle die Zusammenfassungszeile
+  const summaryRow = useMemo(() => {
+    const row: ReportData = {};
+    
+    // Für alle sichtbaren Spalten
+    visibleColumns.forEach(column => {
+      switch (column.field) {
+        case 'Task':
+          row[column.field] = 'ZUSAMMENFASSUNG';
+          break;
+        case 'Duration':
+          row[column.field] = summaryStats.totalHours;
+          break;
+        case 'TotalHours':
+          row[column.field] = summaryStats.totalHours;
+          break;
+        case 'BillableHours':
+          row[column.field] = summaryStats.billableHours;
+          break;
+        default:
+          row[column.field] = '';
+      }
+    });
+    
+    return row;
+  }, [visibleColumns, summaryStats]);
+
   // Reset Projekt-Auswahl wenn ein neuer Kunde ausgewählt wird
   useEffect(() => {
     setSelectedProject('Alle Projekte');
@@ -192,28 +275,6 @@ export const ReportView = () => {
       </div>
     );
   }
-
-  // Erstelle Mapping zwischen deutschen Namen und Feldnamen
-  const columnMapping = {
-    teammitglieder: 'User',
-    kunde: 'Client', 
-    projekt: 'Project',
-    taetigkeit: 'Task',
-    beschreibung: 'Description',
-    abrechenbar: 'Billable',
-    datum: 'Start date',
-    dauer: 'Duration',
-    tags: 'Tags'
-  };
-
-  // Filtere die sichtbaren Spalten basierend auf der Benutzerauswahl
-  const visibleColumns = REPORT_COLUMNS.filter(col => {
-    const germanKey = Object.keys(columnMapping).find(
-      key => columnMapping[key as keyof typeof columnMapping] === col.field
-    ) as keyof ColumnVisibilityState;
-    
-    return germanKey ? columnVisibility[germanKey] : col.visible;
-  });
 
   return (
     <div className={styles.container}>
@@ -255,13 +316,23 @@ export const ReportView = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((row, index) => (
+            {dataWithVirtualColumns.map((row, index) => (
               <tr key={index}>
                 {visibleColumns.map(column => (
                   <td key={column.field}>{row[column.field]}</td>
                 ))}
               </tr>
             ))}
+            {/* Zusammenfassungszeile */}
+            {filteredData.length > 0 && (
+              <tr className={styles.summaryRow}>
+                {visibleColumns.map(column => (
+                  <td key={`summary-${column.field}`} className={styles.summaryCell}>
+                    {summaryRow[column.field]}
+                  </td>
+                ))}
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
