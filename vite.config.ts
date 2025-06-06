@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => {
   
   return {
     plugins: [react()],
+    base: '/websense/',
     test: {
       globals: true,
       environment: 'jsdom',

@@ -1,0 +1,57 @@
+# Toggl WebSense - Apache-Konfiguration für /websense/
+# Version: PHP-Proxy (finale)
+
+# PHP-Proxy explizit erlauben (nicht weiterleiten)
+RewriteEngine On
+RewriteRule ^api-proxy\.php$ - [L]
+
+# Direkter PHP-Zugriff-Schutz deaktiviert (Apache-Kompatibilität)
+# TODO: Alternative Implementierung
+
+# SPA-Routing: Alle anderen Requests zu index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /websense/index.html [L]
+
+# Sicherheits-Header
+<IfModule mod_headers.c>
+    # Content Security Policy (nur interne Calls nötig)
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';"
+    
+    # Weitere Sicherheits-Header
+    Header always set X-Frame-Options "DENY"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    # HSTS deaktiviert (nur über HTTPS verfügbar)
+    # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    Header always set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Performance: Komprimierung
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+</IfModule>
+
+# Cache-Header für statische Assets
+<IfModule mod_expires.c>
+    ExpiresActive on
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+</IfModule>
+
+# PHP-spezifische Einstellungen
+<IfModule mod_php.c>
+    php_value max_execution_time 30
+    php_value memory_limit 128M
+</IfModule> 

@@ -21,7 +21,13 @@ export const StatusBar = ({ onLogout }: StatusBarProps) => {
 
   const fetchUserInfo = async () => {
     try {
-      const response = await fetch('/toggl-api/api/v9/me', {
+      // Dynamische URL-Auswahl basierend auf Umgebung
+      const isDevelopment = import.meta.env.DEV;
+      const apiUrl = isDevelopment 
+        ? '/toggl-api/api/v9/me'  // Entwicklung: Vite-Proxy
+        : '/websense/api-proxy.php?endpoint=/api/v9/me';  // Produktion: PHP-Proxy
+      
+      const response = await fetch(apiUrl, {
         headers: {
           'Authorization': `Basic ${btoa(`${TogglService.getApiToken()}:api_token`)}`,
           'Content-Type': 'application/json',

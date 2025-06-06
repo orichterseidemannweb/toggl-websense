@@ -1,0 +1,48 @@
+# Toggl WebSense - Production .htaccess für /websense/
+# Version 1.2.3
+
+# MIME-Types definieren (WICHTIG für CSS/JS)
+AddType text/css .css
+AddType application/javascript .js
+AddType image/svg+xml .svg
+
+# Toggl API Proxy für websense Unterverzeichnis
+RewriteEngine On
+
+# Proxy für Toggl Reports API (beide Varianten)
+RewriteRule ^toggl-api/reports/(.*)$ https://api.track.toggl.com/reports/$1 [P,L]
+RewriteRule ^websense/toggl-api/reports/(.*)$ https://api.track.toggl.com/reports/$1 [P,L]
+
+# Proxy für Toggl API (beide Varianten) 
+RewriteRule ^toggl-api/api/(.*)$ https://api.track.toggl.com/api/$1 [P,L]
+RewriteRule ^websense/toggl-api/api/(.*)$ https://api.track.toggl.com/api/$1 [P,L]
+
+# Single Page Application - nur für websense Verzeichnis
+RewriteCond %{REQUEST_URI} ^/websense/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^websense/(.*)$ /websense/index.html [L]
+
+# Sicherheits-Headers
+Header always set X-Content-Type-Options nosniff
+Header always set X-Frame-Options DENY
+Header always set X-XSS-Protection "1; mode=block"
+
+# Cache-Kontrolle für Assets
+<filesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg)$">
+    ExpiresActive on
+    ExpiresDefault "access plus 1 month"
+</filesMatch>
+
+# GZIP Komprimierung
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+</IfModule> 

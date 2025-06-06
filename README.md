@@ -154,12 +154,15 @@ npm test -- --watch
 ## 🔨 Build & Deployment
 
 ```bash
-# Produktions-Build erstellen
-npm run build
+# Produktions-Build erstellen (mit Server-Dateien)
+npm run build:deploy
 
 # Build lokal testen
 npm run preview
 ```
+
+**Wichtig**: Das `dist/` Verzeichnis wird **nicht** ins Repository gepusht (steht in .gitignore). 
+Nur der Source-Code wird versioniert - der Build wird bei Bedarf generiert.
 
 ### Deployment auf Vercel/Netlify
 

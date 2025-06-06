@@ -30,7 +30,7 @@ const MONTH_NAMES = [
   'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'
 ];
 
-const LOGO_URL = '/logo.png';
+const LOGO_URL = '/websense/logo.png';
 
 export class PDFExportService {
   static async generateActivityReport(options: ExportOptions): Promise<void> {

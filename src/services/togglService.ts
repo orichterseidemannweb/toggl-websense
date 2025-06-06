@@ -10,7 +10,12 @@ interface ReportData {
 }
 
 export class TogglService {
-  private static readonly BASE_URL = '/toggl-api/reports/api/v3/shared';
+  private static getBaseUrl(): string {
+    const isDevelopment = import.meta.env.DEV;
+    return isDevelopment 
+      ? '/toggl-api/reports/api/v3/shared'  // Entwicklung: Vite-Proxy
+      : '/websense/api-proxy.php?endpoint=/reports/api/v3/shared';  // Produktion: PHP-Proxy
+  }
   private static readonly REPORT_ID = '58b3637913351d762d43a00ad7c88d85'; // Hardcoded, da nicht sensitiv
   private static readonly SESSION_KEY = 'toggl_session_token'; // Key für sessionStorage
   private static apiToken: string = '';
@@ -102,7 +107,13 @@ export class TogglService {
 
   public static async testConnection(): Promise<boolean> {
     try {
-      const response = await fetch('/toggl-api/api/v9/me', {
+      // Dynamische URL-Auswahl basierend auf Umgebung
+      const isDevelopment = import.meta.env.DEV;
+      const apiUrl = isDevelopment 
+        ? '/toggl-api/api/v9/me'  // Entwicklung: Vite-Proxy
+        : '/websense/api-proxy.php?endpoint=/api/v9/me';  // Produktion: PHP-Proxy
+      
+      const response = await fetch(apiUrl, {
         headers: {
           'Authorization': `Basic ${btoa(`${this.apiToken}:api_token`)}`,
           'Content-Type': 'application/json',
@@ -124,7 +135,8 @@ export class TogglService {
 
   public static async fetchReportData(params: TogglRequestParams): Promise<string> {
     try {
-      const response = await fetch(`${this.BASE_URL}/${this.REPORT_ID}/csv`, {
+      const baseUrl = this.getBaseUrl();
+      const response = await fetch(`${baseUrl}/${this.REPORT_ID}/csv`, {
         method: 'POST',
         headers: {
           'Authorization': `Basic ${btoa(this.apiToken + ':api_token')}`,
