@@ -65,8 +65,7 @@ export const StatusBar = ({ onLogout }: StatusBarProps) => {
     <div className={styles.statusBar}>
       <div className={styles.statusIcon} title="Verbunden">✓</div>
       <div className={styles.userInfo}>
-        <span className={styles.userName}>{userInfo.fullname}</span>
-        <span className={styles.userEmail}>{userInfo.email}</span>
+        <span className={styles.userText}>Angemeldet als {userInfo.email}</span>
       </div>
       <button 
         className={styles.logoutButton} 

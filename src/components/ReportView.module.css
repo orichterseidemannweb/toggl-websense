@@ -44,15 +44,16 @@
 
 .exportButton {
   padding: 12px 20px;
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  color: #374151;
+  border: 1px solid rgba(5, 150, 105, 0.3);
+  border-radius: 20px;
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 500;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(5, 150, 105, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   letter-spacing: -0.01em;
   display: flex;
   align-items: center;
@@ -60,20 +61,21 @@
 }
 
 .exportButton:hover {
-  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(5, 150, 105, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(5, 150, 105, 0.4);
 }
 
 .bulkExportButton {
-  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%) !important;
+  border-color: rgba(124, 58, 237, 0.3) !important;
   position: relative;
   overflow: hidden;
 }
 
 .bulkExportButton:hover {
-  background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%) !important;
-  box-shadow: 0 4px 8px rgba(124, 58, 237, 0.3) !important;
+  border-color: rgba(124, 58, 237, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2) !important;
 }
 
 .bulkExportButton::before {

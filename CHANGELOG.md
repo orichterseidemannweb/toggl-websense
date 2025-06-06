@@ -5,6 +5,39 @@ Alle bemerkenswerten Änderungen an diesem Projekt werden in dieser Datei dokume
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2025-01-06
+
+### ✨ Major UI Redesign: Vollständiges Bubble-Design-System
+
+#### 🎨 Neue Designsprache
+- **Glasmorphism-Effekte**: Einführung eines einheitlichen Bubble-Designs mit `backdrop-filter: blur(8px)` für moderne Glasoptik
+- **Einheitliche Border-Radius**: Alle interaktiven Elemente verwenden jetzt 20px Rundungen für konsistente Erscheinung
+- **Responsive Hover-Animationen**: `translateY()` Effekte für alle Bubbles mit subtilen Schatten-Variationen
+- **Transparente Hintergründe**: `rgba(255, 255, 255, 0.9)` für elegante Durchsichtigkeit
+
+#### 🔧 Betroffene Komponenten
+- **StatusBar (Header)**: Kompletter Redesign der Benutzerinformationen mit größerer Bubble und "Angemeldet als" Präfix
+- **PDF-Export-Buttons**: Farbkodierte Bubble-Optik (Grün für Standard-Export, Lila für Bulk-Export)
+- **Login-Komponente**: Vollständige Überarbeitung mit Glasmorphism-Container, Input-Feld und Submit-Button
+- **Footer-Bubbles**: Bereits in v1.4.2 etabliertes Design als Basis für das gesamte System
+
+#### 📱 Technische Verbesserungen
+- **Konsistente Farbpalette**: Einheitliche Border-Farben je Funktionsbereich
+- **Optimierte Performance**: Effiziente CSS-Transitions für alle Hover-Effekte
+- **Mobile Responsivität**: Flexible Layouts mit `flex-wrap` für alle Bildschirmgrößen
+- **Accessibility**: Verbesserte Kontraste und Hover-States für bessere Benutzererfahrung
+
+#### 🎯 Design-Philosophie
+- **Minimalismus**: Reduzierung visueller Unordnung durch einheitliche Bubble-Struktur
+- **Modernität**: Zeitgemäße Glasmorphism-Trends für professionelle Optik
+- **Intuitivität**: Klare visuelle Hierarchie durch konsistente Designsprache
+- **Eleganz**: Subtile Animationen ohne Übertreibung
+
+### 🚀 Build & Deployment
+- **Produktionsversion**: Erfolgreich getestet und optimiert für Webserver-Deployment
+- **Asset-Optimierung**: CSS-Bundle auf 21.88 kB optimiert mit allen neuen Styles
+- **Cross-Browser-Kompatibilität**: Vollständige Unterstützung für moderne Browser
+
 ## [1.4.2] - 2025-06-06
 
 ### 🎨 UI-Verbesserungen

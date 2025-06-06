@@ -16,6 +16,14 @@ Eine moderne React-Webanwendung zur Verwaltung und Analyse von Toggl-Zeiterfassu
 - 🔍 **Erweiterte Filter** - Sortierung und Filterung der Zeiteinträge
 - 🚫 **Intelligente Filterung** - Interne Projekte werden automatisch ausgeblendet
 
+### 🎨 **Modernes Bubble-Design-System (v1.5.0)**
+- **Glasmorphism-Optik**: Einheitliche Bubble-Designs mit transparenten Hintergründen und Blur-Effekten
+- **Konsistente Designsprache**: Alle interaktiven Elemente (Header, Buttons, Login, Footer) folgen dem gleichen modernen Design
+- **Responsive Animationen**: Subtile Hover-Effekte mit `translateY()` Transformationen für bessere UX
+- **Farbkodierte Bereiche**: Intuitive Farbgebung je Funktionsbereich (Grün für Exports, Lila für Bulk-Aktionen, Blau für Navigation)
+
+### 📊 **Umfangreiche Datenanalyse**
+
 ## 🆕 Version 1.4.2 - Polished UI & Enhanced Footer
 
 ### 🎨 UI-Verbesserungen

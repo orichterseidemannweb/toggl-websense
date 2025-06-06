@@ -1,25 +1,35 @@
 .statusBar {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 5px 10px;
-  background-color: #f0f0f0;
-  border-radius: 3px;
-  font-size: 12px;
-  color: #333;
-  border: 1px solid #ddd;
+  gap: 12px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 20px;
+  font-size: 14px;
+  color: #374151;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.statusBar:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .statusIcon {
   color: #4CAF50;
   font-weight: bold;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background-color: rgba(76, 175, 80, 0.1);
+  background-color: rgba(76, 175, 80, 0.15);
+  font-size: 12px;
 }
 
 .userInfo {
@@ -29,28 +39,30 @@
   flex: 1;
 }
 
-.userName {
+.userText {
   font-weight: 500;
-  color: #333;
-}
-
-.userEmail {
-  color: #666;
-  font-size: 11px;
+  color: #374151;
+  font-size: 14px;
 }
 
 .logoutButton {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   color: #666;
-  padding: 4px;
-  border-radius: 3px;
+  padding: 6px;
+  border-radius: 8px;
   transition: all 0.2s ease;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .logoutButton:hover {
   color: #e74c3c;
   background-color: rgba(231, 76, 60, 0.1);
+  transform: scale(1.1);
 } 
