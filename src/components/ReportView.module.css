@@ -132,6 +132,25 @@
   border: 1px solid rgba(124, 58, 237, 0.2);
 }
 
+.billingIndicator {
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 8px;
+  border: 1px solid;
+}
+
+.billingIndicator:contains("✅") {
+  color: #059669;
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+  border-color: rgba(5, 150, 105, 0.2);
+}
+
+.billingIndicator:contains("⚠️") {
+  color: #d97706;
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+  border-color: rgba(217, 119, 6, 0.2);
+}
+
 .summaryRow {
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   border-top: 2px solid #3b82f6;

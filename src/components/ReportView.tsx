@@ -178,31 +178,7 @@ export const ReportView = () => {
     });
   }, [reportData, selectedClient, selectedProject, shouldShowProjectFilter, columnVisibility.beschreibung]);
 
-  // Erstelle Mapping zwischen deutschen Namen und Feldnamen
-  const columnMapping = {
-    teammitglieder: 'User',
-    kunde: 'Client', 
-    projekt: 'Project',
-    taetigkeit: 'Task',
-    beschreibung: 'Description',
-    abrechenbar: 'Billable',
-    datum: 'Start date',
-    dauer: 'Duration',
-    gesamtstunden: 'TotalHours',
-    abrechenbareStunden: 'BillableHours',
-    tags: 'Tags'
-  };
-
-  // Filtere die sichtbaren Spalten basierend auf der Benutzerauswahl
-  const visibleColumns = useMemo(() => REPORT_COLUMNS.filter(col => {
-    const germanKey = Object.keys(columnMapping).find(
-      key => columnMapping[key as keyof typeof columnMapping] === col.field
-    ) as keyof ColumnVisibilityState;
-    
-    return germanKey ? columnVisibility[germanKey] : col.visible;
-  }), [columnVisibility]);
-
-  // Berechne Zusammenfassungsstatistiken
+  // Berechne Zusammenfassungsstatistiken ZUERST
   const summaryStats = useMemo(() => {
     let totalMinutes = 0;
     let billableMinutes = 0;
@@ -219,9 +195,53 @@ export const ReportView = () => {
     return {
       totalHours: formatMinutesToTime(totalMinutes),
       billableHours: formatMinutesToTime(billableMinutes),
-      totalEntries: filteredData.length
+      totalEntries: filteredData.length,
+      totalMinutes,
+      billableMinutes,
+      allBillable: totalMinutes === billableMinutes && totalMinutes > 0
     };
   }, [filteredData]);
+
+  // Erstelle Mapping zwischen deutschen Namen und Feldnamen
+  const columnMapping = {
+    teammitglieder: 'User',
+    kunde: 'Client', 
+    projekt: 'Project',
+    taetigkeit: 'Task',
+    beschreibung: 'Description',
+    abrechenbar: 'Billable',
+    datum: 'Start date',
+    dauer: 'Duration',
+    gesamtstunden: 'TotalHours',
+    abrechenbareStunden: 'BillableHours',
+    tags: 'Tags'
+  };
+
+  // Filtere die sichtbaren Spalten basierend auf der Benutzerauswahl und intelligenter Logik
+  const visibleColumns = useMemo(() => REPORT_COLUMNS.filter(col => {
+    const germanKey = Object.keys(columnMapping).find(
+      key => columnMapping[key as keyof typeof columnMapping] === col.field
+    ) as keyof ColumnVisibilityState;
+    
+    // Intelligente Spalten-Logik: Wenn alle Zeiten abrechenbar sind, zeige nur "Abrechenbar"
+    if (summaryStats.allBillable) {
+      // Verstecke "Gesamtzeit" wenn alle Zeiten abrechenbar sind
+      if (col.field === 'TotalHours') {
+        return false;
+      }
+      // Ändere Header für "Abrechenbare Zeit" zu "Arbeitszeit" wenn alle abrechenbar sind
+      if (col.field === 'BillableHours') {
+        col.header = 'Arbeitszeit';
+      }
+    } else {
+      // Zeige beide Spalten wenn es Unterschiede gibt
+      if (col.field === 'BillableHours') {
+        col.header = 'Abrechenbar';
+      }
+    }
+    
+    return germanKey ? columnVisibility[germanKey] : col.visible;
+  }), [columnVisibility, summaryStats.allBillable]);
 
   // Erstelle Datenzeilen mit virtuellen Spalten für die Zusammenfassung
   const dataWithVirtualColumns = useMemo(() => {
@@ -249,7 +269,8 @@ export const ReportView = () => {
           row[column.field] = summaryStats.totalHours;
           break;
         case 'BillableHours':
-          row[column.field] = summaryStats.billableHours;
+          // Wenn alle Zeiten abrechenbar sind, zeige Gesamtzeit in "Arbeitszeit"-Spalte
+          row[column.field] = summaryStats.allBillable ? summaryStats.totalHours : summaryStats.billableHours;
           break;
         default:
           row[column.field] = '';
@@ -372,6 +393,16 @@ export const ReportView = () => {
         {!columnVisibility.beschreibung && reportData.length > 0 && (
           <span className={styles.groupingIndicator}>
             • 📊 Tätigkeiten gruppiert (Zeiten summiert)
+          </span>
+        )}
+        {summaryStats.allBillable && summaryStats.totalMinutes > 0 && (
+          <span className={styles.billingIndicator}>
+            • ✅ Alle Zeiten abrechenbar
+          </span>
+        )}
+        {!summaryStats.allBillable && summaryStats.totalMinutes > 0 && (
+          <span className={styles.billingIndicator}>
+            • ⚠️ Gemischte Zeiten (abrechenbar/nicht-abrechenbar)
           </span>
         )}
       </div>
