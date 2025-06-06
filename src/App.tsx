@@ -3,23 +3,29 @@ import styles from './App.module.css'
 import Login from './components/Login'
 import { StatusBar } from './components/StatusBar'
 import { TogglService } from './services/togglService'
+import { DebugInfo } from './components/DebugInfo'
+import { ReportView } from './components/ReportView'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('App gestartet, initialisiere Toggl');
     initializeToggl();
   }, []);
 
   const initializeToggl = async () => {
     try {
+      console.log('Starte Toggl-Initialisierung');
       const success = await TogglService.initialize();
+      console.log('Toggl-Initialisierung Ergebnis:', success);
       setIsAuthenticated(success);
       if (!success) {
         setError('API-Token nicht gefunden oder ungültig');
       }
     } catch (err) {
+      console.error('Fehler bei der Toggl-Initialisierung:', err);
       setError(err instanceof Error ? err.message : 'Unbekannter Fehler');
       setIsAuthenticated(false);
     }
@@ -27,7 +33,9 @@ function App() {
 
   const handleTokenChange = async (token: string) => {
     try {
+      console.log('Versuche Token zu setzen');
       const success = await TogglService.setApiToken(token);
+      console.log('Token setzen Ergebnis:', success);
       setIsAuthenticated(success);
       if (!success) {
         setError('Verbindung mit dem Token fehlgeschlagen');
@@ -35,6 +43,7 @@ function App() {
         setError(null);
       }
     } catch (err) {
+      console.error('Fehler beim Token setzen:', err);
       setError(err instanceof Error ? err.message : 'Fehler bei der Verbindung');
       setIsAuthenticated(false);
     }
@@ -56,10 +65,11 @@ function App() {
               <Login onTokenChange={handleTokenChange} />
             </>
           ) : (
-            <div>Erfolgreich verbunden!</div>
+            <ReportView />
           )}
         </main>
       </div>
+      <DebugInfo />
     </div>
   )
 }
