@@ -32,7 +32,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   backdrop-filter: blur(5px);
-  min-width: 90px;
+  min-width: 140px;
 }
 
 .navButton:hover {
@@ -44,6 +44,21 @@
 
 .navButton:active {
   transform: translateY(0);
+}
+
+.navButton.disabled {
+  background: rgba(107, 114, 128, 0.1);
+  border: 1px solid rgba(107, 114, 128, 0.2);
+  color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.navButton.disabled:hover {
+  background: rgba(107, 114, 128, 0.1);
+  border: 1px solid rgba(107, 114, 128, 0.2);
+  transform: none;
+  box-shadow: none;
 }
 
 .display {
