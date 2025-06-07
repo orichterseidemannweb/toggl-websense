@@ -39,26 +39,26 @@ function App() {
     }
   };
 
-  const handleTokenChange = async (token: string) => {
+  const handleTokenAndReportIdChange = async (token: string, reportId: string) => {
     try {
-      // console.log('Versuche Token zu setzen');
-      const success = await TogglService.setApiToken(token);
-      // console.log('Token setzen Ergebnis:', success);
+      // console.log('Versuche Token und Report-ID zu setzen');
+      const success = await TogglService.setApiTokenAndReportId(token, reportId);
+      // console.log('Token und Report-ID setzen Ergebnis:', success);
       setIsAuthenticated(success);
       if (!success) {
-        setError('Verbindung mit dem Token fehlgeschlagen');
+        setError('Verbindung mit Token/Report-ID fehlgeschlagen. Bitte prüfen Sie Ihre Eingaben.');
       } else {
         setError(null);
       }
     } catch (err) {
-      console.error('Fehler beim Token setzen:', err);
+      console.error('Fehler beim Token/Report-ID setzen:', err);
       setError(err instanceof Error ? err.message : 'Fehler bei der Verbindung');
       setIsAuthenticated(false);
     }
   };
 
   const handleLogout = () => {
-    TogglService.clearToken(); // Token aus Memory und Storage löschen
+    TogglService.clearToken(); // Token und Report-ID aus Memory und Storage löschen
     setIsAuthenticated(false);
     setError(null);
   };
@@ -76,7 +76,7 @@ function App() {
           {!isAuthenticated ? (
             <>
               {error && <div className={styles.error}>{error}</div>}
-              <Login onTokenChange={handleTokenChange} />
+              <Login onTokenAndReportIdChange={handleTokenAndReportIdChange} />
             </>
           ) : (
             <ReportView />

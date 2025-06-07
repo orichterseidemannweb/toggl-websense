@@ -76,11 +76,13 @@ Eine moderne React-Webanwendung zur Verwaltung und Analyse von Toggl-Zeiterfassu
 
 ## 🔐 Sicherheits-Features
 
-- **Kein Token im Code** - API-Token wird nur zur Laufzeit eingegeben
-- **Session-basierte Speicherung** - Token wird nur im sessionStorage gespeichert (nicht persistent)
-- **Automatische Token-Validierung** - Ungültige Tokens werden automatisch gelöscht
+- **Kein sensible Daten im Code** - Weder API-Token noch Report-IDs sind hardcodiert
+- **Dynamische Konfiguration** - Benutzer geben API-Token und Report-ID beim Login ein
+- **Session-basierte Speicherung** - Credentials werden nur im sessionStorage gespeichert (nicht persistent)
+- **Automatische Token-Validierung** - Ungültige Tokens und Report-IDs werden automatisch gelöscht
 - **Sichere Übertragung** - Alle API-Calls über HTTPS
-- **Logout-Funktionalität** - Token wird vollständig aus Memory und Storage gelöscht
+- **Multi-Team-Fähigkeit** - Jedes Team kann eigene Report-IDs verwenden ohne Code-Änderungen
+- **Logout-Funktionalität** - Token und Report-ID werden vollständig aus Memory und Storage gelöscht
 
 ## 🚀 Installation
 
@@ -98,18 +100,26 @@ npm run dev
 
 ## 🔑 Konfiguration
 
-### Toggl API Token
-1. Logge dich in [Toggl Track](https://track.toggl.com) ein
-2. Gehe zu **Profile Settings** → **API Token**
-3. Kopiere deinen persönlichen API Token
-4. Beim ersten Start der App gibst du diesen Token ein
-5. **Der Token wird für die Session gespeichert** - du musst ihn nicht bei jedem Reload neu eingeben
+### Login-Konfiguration
+1. **Toggl API Token besorgen**:
+   - Logge dich in [Toggl Track](https://track.toggl.com) ein
+   - Gehe zu **Profile Settings** → **API Token**  
+   - Kopiere deinen persönlichen API Token
+
+2. **Report-ID ermitteln**:
+   - Erstelle oder öffne einen Report in Toggl Track
+   - Stelle den Report auf **"öffentlich"** (wichtig!)
+   - Kopiere die Report-ID aus der URL des Reports
+
+3. **Beim Login eingeben**:
+   - Beim ersten Start der App gibst du **sowohl Token als auch Report-ID** ein
+   - **Beide werden für die Session gespeichert** - du musst sie nicht bei jedem Reload neu eingeben
 
 ### Session-Verhalten
-- **Token bleibt aktiv**: Während der Browser-Session (Tab offen)
+- **Credentials bleiben aktiv**: Während der Browser-Session (Tab offen)
 - **Automatische Löschung**: Beim Schließen des Browser-Tabs
 - **Logout**: Manuell über den Logout-Button in der StatusBar
-- **Validierung**: Bei jedem App-Start wird die Token-Gültigkeit geprüft
+- **Validierung**: Bei jedem App-Start wird die Gültigkeit von Token und Report-Zugriff geprüft
 
 ## 📋 Voraussetzungen
 
@@ -155,7 +165,8 @@ VITE_TOGGL_API_BASE_URL=https://api.track.toggl.com/api/v9
 ### 1. Anmeldung
 - Starte die Anwendung mit `npm run dev`
 - Öffne http://localhost:5173
-- Gib deinen Toggl API-Token ein
+- Gib deinen **Toggl API-Token** und die **Report-ID** ein
+- Beide Felder sind erforderlich für den Zugriff auf deine Zeitdaten
 
 ### 2. Daten filtern
 - **Zeitraum**: Wähle Jahr und Monat über den Monatsselektor

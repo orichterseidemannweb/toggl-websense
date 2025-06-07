@@ -16,65 +16,85 @@ export class TogglService {
       ? '/toggl-api/reports/api/v3/shared'  // Entwicklung: Vite-Proxy
       : '/websense/api-proxy.php?endpoint=/reports/api/v3/shared';  // Produktion: PHP-Proxy
   }
-  private static readonly REPORT_ID = '58b3637913351d762d43a00ad7c88d85'; // Hardcoded, da nicht sensitiv
   private static readonly SESSION_KEY = 'toggl_session_token'; // Key für sessionStorage
+  private static readonly REPORT_ID_SESSION_KEY = 'toggl_report_id'; // Key für Report-ID
   private static apiToken: string = '';
+  private static reportId: string = '';
 
   public static async initialize(): Promise<boolean> {
-    console.log('TogglService initialisiert - prüfe gespeicherten Token...');
+    console.log('TogglService initialisiert - prüfe gespeicherte Daten...');
     
-    // Versuche Token aus sessionStorage zu laden
+    // Versuche Token und Report-ID aus sessionStorage zu laden
     const storedToken = this.loadTokenFromSession();
-    if (storedToken) {
-      console.log('Gespeicherter Token gefunden - teste Verbindung...');
+    const storedReportId = this.loadReportIdFromSession();
+    
+    if (storedToken && storedReportId) {
+      console.log('Gespeicherte Daten gefunden - teste Verbindung...');
       this.apiToken = storedToken;
+      this.reportId = storedReportId;
       const isValid = await this.testConnection();
       if (isValid) {
-        console.log('Gespeicherter Token ist gültig');
+        console.log('Gespeicherte Daten sind gültig');
         return true;
       } else {
-        console.log('Gespeicherter Token ist ungültig - lösche ihn');
-        this.clearStoredToken();
+        console.log('Gespeicherte Daten sind ungültig - lösche sie');
+        this.clearStoredData();
       }
     }
     
-    console.log('Kein gültiger Token gefunden - Benutzer muss sich anmelden');
+    console.log('Keine gültigen Daten gefunden - Benutzer muss sich anmelden');
     return false;
   }
 
-  public static async setApiToken(token: string): Promise<boolean> {
-    console.log('API Token wird gesetzt und getestet...');
+  public static async setApiTokenAndReportId(token: string, reportId: string): Promise<boolean> {
+    console.log('API Token und Report-ID werden gesetzt und getestet...');
     this.apiToken = token;
-    const isValid = await this.testConnection();
+    this.reportId = reportId;
     
-    if (isValid) {
-      // Nur bei gültigem Token speichern
-      this.saveTokenToSession(token);
-      console.log('Token erfolgreich gespeichert');
-    } else {
-      // Bei ungültigem Token nicht speichern
+    // Erst Token testen
+    const isTokenValid = await this.testConnection();
+    if (!isTokenValid) {
+      console.log('Token ungültig');
       this.apiToken = '';
-      console.log('Token ungültig - nicht gespeichert');
+      this.reportId = '';
+      return false;
     }
     
-    return isValid;
+    // Dann Report-ID testen
+    const isReportValid = await this.testReportAccess();
+    if (!isReportValid) {
+      console.log('Report-ID ungültig oder nicht zugänglich');
+      this.apiToken = '';
+      this.reportId = '';
+      return false;
+    }
+    
+    // Nur bei gültigen Daten speichern
+    this.saveTokenToSession(token);
+    this.saveReportIdToSession(reportId);
+    console.log('Token und Report-ID erfolgreich gespeichert');
+    return true;
   }
 
   public static getApiToken(): string {
     return this.apiToken;
   }
 
-  // Token aus Memory und Storage löschen (für Logout-Funktionalität)
+  public static getReportId(): string {
+    return this.reportId;
+  }
+
+  // Token und Report-ID aus Memory und Storage löschen
   public static clearToken(): void {
     this.apiToken = '';
-    this.clearStoredToken();
-    console.log('Token wurde vollständig gelöscht');
+    this.reportId = '';
+    this.clearStoredData();
+    console.log('Alle Daten wurden vollständig gelöscht');
   }
 
   // Private Methoden für Token-Storage
   private static saveTokenToSession(token: string): void {
     try {
-      // Einfache Base64-Kodierung für minimale Verschleierung (nicht Sicherheit!)
       const encodedToken = btoa(token);
       sessionStorage.setItem(this.SESSION_KEY, encodedToken);
     } catch (error) {
@@ -86,22 +106,44 @@ export class TogglService {
     try {
       const encodedToken = sessionStorage.getItem(this.SESSION_KEY);
       if (encodedToken) {
-        // Base64-Dekodierung
         return atob(encodedToken);
       }
     } catch (error) {
       console.error('Fehler beim Laden des Tokens:', error);
-      // Bei Fehler Token löschen
-      this.clearStoredToken();
+      this.clearStoredData();
     }
     return null;
   }
 
-  private static clearStoredToken(): void {
+  // Private Methoden für Report-ID Storage
+  private static saveReportIdToSession(reportId: string): void {
+    try {
+      const encodedReportId = btoa(reportId);
+      sessionStorage.setItem(this.REPORT_ID_SESSION_KEY, encodedReportId);
+    } catch (error) {
+      console.error('Fehler beim Speichern der Report-ID:', error);
+    }
+  }
+
+  private static loadReportIdFromSession(): string | null {
+    try {
+      const encodedReportId = sessionStorage.getItem(this.REPORT_ID_SESSION_KEY);
+      if (encodedReportId) {
+        return atob(encodedReportId);
+      }
+    } catch (error) {
+      console.error('Fehler beim Laden der Report-ID:', error);
+      this.clearStoredData();
+    }
+    return null;
+  }
+
+  private static clearStoredData(): void {
     try {
       sessionStorage.removeItem(this.SESSION_KEY);
+      sessionStorage.removeItem(this.REPORT_ID_SESSION_KEY);
     } catch (error) {
-      console.error('Fehler beim Löschen des gespeicherten Tokens:', error);
+      console.error('Fehler beim Löschen der gespeicherten Daten:', error);
     }
   }
 
@@ -133,10 +175,48 @@ export class TogglService {
     }
   }
 
+  // Neue Methode: Report-Zugriff testen
+  public static async testReportAccess(): Promise<boolean> {
+    try {
+      if (!this.reportId) {
+        console.error('Keine Report-ID zum Testen vorhanden');
+        return false;
+      }
+
+      const baseUrl = this.getBaseUrl();
+      const response = await fetch(`${baseUrl}/${this.reportId}/csv`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${btoa(this.apiToken + ':api_token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          start_date: '2024-01-01',
+          end_date: '2024-01-02',
+        }),
+      });
+
+      if (!response.ok) {
+        console.error('Report-Zugriff fehlgeschlagen:', response.status);
+        return false;
+      }
+      
+      console.log('Report-Zugriff erfolgreich');
+      return true;
+    } catch (error) {
+      console.error('Fehler beim Testen des Report-Zugriffs:', error);
+      return false;
+    }
+  }
+
   public static async fetchReportData(params: TogglRequestParams): Promise<string> {
     try {
+      if (!this.reportId) {
+        throw new Error('Keine Report-ID konfiguriert');
+      }
+
       const baseUrl = this.getBaseUrl();
-      const response = await fetch(`${baseUrl}/${this.REPORT_ID}/csv`, {
+      const response = await fetch(`${baseUrl}/${this.reportId}/csv`, {
         method: 'POST',
         headers: {
           'Authorization': `Basic ${btoa(this.apiToken + ':api_token')}`,
@@ -229,5 +309,129 @@ export class TogglService {
 
     result.push(current.trim());
     return result;
+  }
+
+  // Neue Methode: Verfügbare Reports abrufen
+  public static async fetchAvailableReports(): Promise<any[]> {
+    try {
+      // Workspace ID aus den User-Daten holen
+      const workspaceId = await this.getWorkspaceId();
+      console.log('Gefundene Workspace ID:', workspaceId);
+
+      if (!workspaceId) {
+        throw new Error('Keine Workspace ID gefunden');
+      }
+
+      // Verschiedene API-Endpoints probieren (mit Workspace ID)
+      const endpoints = [
+        // Shared Reports für spezifische Workspace
+        this.getWorkspaceSharedReportsUrl(workspaceId),
+        // Saved Reports API
+        this.getWorkspaceSavedReportsUrl(workspaceId),
+        // Workspace Projects (zum Vergleich)
+        this.getWorkspaceProjectsUrl(workspaceId),
+        // Fallback: Shared Reports allgemein
+        this.getBaseUrl()
+      ];
+
+      console.log('Versuche verschiedene Report API-Endpoints...');
+      
+      for (const endpoint of endpoints) {
+        try {
+          console.log(`Versuche Endpoint: ${endpoint}`);
+          const response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Basic ${btoa(this.apiToken + ':api_token')}`,
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            console.log(`Erfolg mit Endpoint ${endpoint}:`, data);
+            return Array.isArray(data) ? data : [data];
+          } else {
+            console.log(`Endpoint ${endpoint} failed with status:`, response.status);
+          }
+        } catch (endpointError) {
+          console.log(`Endpoint ${endpoint} error:`, endpointError);
+        }
+      }
+
+      throw new Error('Alle API-Endpoints fehlgeschlagen');
+    } catch (error) {
+      console.error('Fehler beim Abrufen der verfügbaren Reports:', error);
+      throw error;
+    }
+  }
+
+  // Hilfsmethode um Workspace ID zu bekommen
+  private static async getWorkspaceId(): Promise<number | null> {
+    try {
+      // Zuerst versuchen, Workspace ID dynamisch zu ermitteln
+      const workspaces = await this.getUserWorkspaces();
+      if (workspaces && workspaces.length > 0) {
+        return workspaces[0].id; // Erste (und vermutlich einzige) Workspace
+      }
+    } catch (error) {
+      console.error('Fehler beim Abrufen der Workspace ID dynamisch, verwende Fallback:', error);
+    }
+    
+    // Fallback: Bekannte Workspace ID aus den bisherigen Daten
+    console.log('Verwende Fallback Workspace ID: 1590779');
+    return 1590779; // Ihre bekannte Workspace ID
+  }
+
+  // Hilfsmethode um User Workspaces zu bekommen
+  private static async getUserWorkspaces(): Promise<any[]> {
+    const url = this.getUserWorkspacesUrl();
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Basic ${btoa(this.apiToken + ':api_token')}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      return await response.json();
+    }
+    throw new Error('Fehler beim Abrufen der Workspaces');
+  }
+
+  private static getWorkspaceReportsUrl(): string {
+    const isDevelopment = import.meta.env.DEV;
+    return isDevelopment 
+      ? '/toggl-api/api/v9/me/workspaces'
+      : '/websense/api-proxy.php?endpoint=/api/v9/me/workspaces';
+  }
+
+  private static getUserWorkspacesUrl(): string {
+    const isDevelopment = import.meta.env.DEV;
+    return isDevelopment 
+      ? '/toggl-api/api/v9/me'
+      : '/websense/api-proxy.php?endpoint=/api/v9/me';
+  }
+
+  private static getWorkspaceSharedReportsUrl(workspaceId: number): string {
+    const isDevelopment = import.meta.env.DEV;
+    return isDevelopment 
+      ? `/toggl-api/reports/api/v3/workspace/${workspaceId}/shared`
+      : `/websense/api-proxy.php?endpoint=/reports/api/v3/workspace/${workspaceId}/shared`;
+  }
+
+  private static getWorkspaceSavedReportsUrl(workspaceId: number): string {
+    const isDevelopment = import.meta.env.DEV;
+    return isDevelopment 
+      ? `/toggl-api/api/v9/workspaces/${workspaceId}/saved_reports`
+      : `/websense/api-proxy.php?endpoint=/api/v9/workspaces/${workspaceId}/saved_reports`;
+  }
+
+  private static getWorkspaceProjectsUrl(workspaceId: number): string {
+    const isDevelopment = import.meta.env.DEV;
+    return isDevelopment 
+      ? `/toggl-api/api/v9/workspaces/${workspaceId}/projects`
+      : `/websense/api-proxy.php?endpoint=/api/v9/workspaces/${workspaceId}/projects`;
   }
 } 

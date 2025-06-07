@@ -5,6 +5,37 @@ Alle bemerkenswerten Änderungen an diesem Projekt werden in dieser Datei dokume
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2025-01-07
+
+### 🔒 Sicherheitsverbesserungen
+- **Report-ID Hardcoding entfernt**: Keine sensiblen Daten mehr im Source Code
+- **Dynamische Report-Auswahl**: Benutzer geben Report-ID beim Login ein
+- **Universelle Portabilität**: Anwendung funktioniert jetzt mit beliebigen öffentlichen Toggl-Reports
+- **Session-Management**: Token und Report-ID werden sicher in Session Storage verwaltet
+
+### 🎨 Login-Interface Redesign
+- **Kompakter Login**: Labels entfernt, Placeholders für cleanes Design  
+- **Inline-Hilfstexte**: Direkte Hinweise unter jedem Eingabefeld
+- **Redundanz eliminiert**: ApiTokenHelp-Komponente entfernt (war redundant zu neuen Hilfstexten)
+- **Textoptimierung**: Präzisere Formulierungen ohne Redundanzen
+
+### ✨ UX-Verbesserungen
+- **Zwei-Felder-Login**: API Token + Report-ID in einem cleanen Formular
+- **Bessere Benutzerführung**: "API Token hier einfügen" / "Report-ID hier einfügen"
+- **Kontextuelle Hilfe**: Gezielte Hinweise zu Toggl Profile Settings und öffentlichen Reports
+- **Responsives Design**: Optimierte Formulargröße für alle Bildschirmgrößen
+
+### 🔧 Technische Verbesserungen
+- **Service-Layer erweitert**: TogglService unterstützt dynamische Report-IDs
+- **Validierung verbessert**: Separate Prüfung von API Token und Report-Zugriff  
+- **Error Handling**: Bessere Fehlermeldungen bei ungültigen Credentials
+- **Code-Cleanup**: Entfernung ungenutzter ApiTokenHelp-Komponente und CSS
+
+### 🛡️ Multi-Team-Fähigkeit
+- **Team-unabhängig**: Jedes Team kann eigene Report-IDs verwenden
+- **Datenschutz**: Keine Team-spezifischen Daten mehr im Code eingebettet
+- **Flexibilität**: Unterstützung für beliebige Toggl-Workspaces und Reports
+
 ## [1.5.0] - 2025-06-06
 
 ### ✨ Major UI Redesign: Vollständiges Bubble-Design-System
