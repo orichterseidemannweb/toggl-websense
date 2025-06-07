@@ -237,4 +237,257 @@
 .summaryCell:first-child {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.1) 100%);
   border-radius: 8px 0 0 8px;
+}
+
+/* Debug Panel Styling - angepasst an das Design-System */
+.debugPanel {
+  margin-top: 24px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+  max-width: 1200px;
+  width: calc(100% - 48px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.debugHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.debugHeader h3 {
+  margin: 0;
+  color: #374151;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.debugContent {
+  padding: 24px;
+}
+
+.debugContent p {
+  margin: 0 0 16px 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.closeBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+}
+
+.closeBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.debugPanel textarea {
+  width: 100%;
+  height: 400px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  padding: 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #ffffff;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.debugPanel textarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.debugControls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+/* Responsive Design für Debug Panel */
+@media (max-width: 768px) {
+  .debugPanel {
+    width: calc(100% - 24px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .debugHeader, .debugContent {
+    padding: 16px;
+  }
+
+  .debugControls {
+    flex-direction: column;
+  }
+}
+
+/* 🆕 Changelog-spezifische Styles */
+.changelogContent {
+  max-height: 500px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f8fafc;
+}
+
+.changelogContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.changelogContent::-webkit-scrollbar-track {
+  background: #f8fafc;
+  border-radius: 3px;
+}
+
+.changelogContent::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.changelogContent::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.changelogSection {
+  padding: 20px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.2s ease;
+}
+
+.changelogSection:last-child {
+  border-bottom: none;
+}
+
+.changelogSection:hover {
+  background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
+}
+
+.changelogSection h4 {
+  margin: 0 0 12px 0;
+  color: #1e40af;
+  font-size: 16px;
+  font-weight: 600;
+  padding-bottom: 8px;
+  border-bottom: 2px solid rgba(59, 130, 246, 0.1);
+}
+
+.changelogSection ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style: none;
+}
+
+.changelogSection li {
+  margin: 8px 0;
+  position: relative;
+  padding-left: 16px;
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.changelogSection li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #3b82f6;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.changelogSection li strong {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+/* Responsive Design für Changelog */
+@media (max-width: 768px) {
+  .changelogContent {
+    max-height: 400px;
+  }
+
+  .changelogSection {
+    padding: 16px;
+  }
+
+  .changelogSection h4 {
+    font-size: 15px;
+  }
+
+  .changelogSection li {
+    font-size: 13px;
+  }
+}
+
+/* 🆕 Version Display */
+.versionContainer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 8px 0;
+  margin-top: 8px;
+}
+
+.versionNumber {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(156, 163, 175, 0.3);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  letter-spacing: 0.02em;
+}
+
+.versionNumber:hover {
+  background: rgba(255, 255, 255, 0.85);
+  color: #4b5563;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+/* Responsive Design für Version */
+@media (max-width: 768px) {
+  .versionContainer {
+    justify-content: center;
+    margin-top: 12px;
+  }
+
+  .versionNumber {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+  }
 } 

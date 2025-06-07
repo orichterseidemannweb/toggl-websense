@@ -1,11 +1,29 @@
 # Changelog
 
-Alle bemerkenswerten Änderungen an diesem Projekt werden in dieser Datei dokumentiert.
+Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert.
 
-Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
-und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## 🚀 Version 1.6.4 - UI-Harmonisierung Komplett (2025-01-06)
 
-## [1.6.3] - 2025-06-07
+### ✨ Neue Features
+- **🎯 Exklusives Panel-Management** - Nur ein Panel kann gleichzeitig geöffnet sein für bessere UX
+- **📋 Changelog-Panel** - Vollständige Versionshistorie direkt in der App verfügbar
+- **🔄 Optimierte Button-Reihenfolge** - Feedback geben → Feedback-Liste → Debug-Info → Changelog
+- **📍 Versionsnummer-Anzeige** - Aktuelle Version elegant in der UI angezeigt
+
+### 🎨 UI/UX Verbesserungen
+- **⚡ Zentrale Panel-Verwaltung** - Automatisches Schließen bei Panel-Wechsel
+- **🎨 Konsistente Close-Buttons** - Einheitliches X-Button Design über alle Panels
+- **📱 Responsive Changelog** - Optimiert für alle Bildschirmgrößen
+- **✨ Glasmorphism-Effekte** - Moderne UI-Elemente mit Backdrop-Filter
+
+### 🔧 Technische Verbesserungen
+- **🔄 Refactored Panel State Management** - Von lokalen zu zentralen Panel-Zuständen
+- **📦 Erweiterte TypeScript-Typen** - Bessere Type-Safety für Panel-Management
+- **🎯 Optimierte Event-Handler** - Effizientere Panel-Interaktionen
+
+---
+
+## 🚀 Version 1.6.3 - Vollständiges Feedback-System (2025-06-07)
 
 ### Hinzugefügt
 - **💡 Feedback-System**: Vollständiges Feature-Request und Bug-Management System

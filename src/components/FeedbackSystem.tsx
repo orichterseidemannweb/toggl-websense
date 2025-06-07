@@ -8,20 +8,31 @@ export interface FeedbackItem {
   date: string;
   description: string;
   debugLog?: string;
-  status: 'Neu' | 'In Bearbeitung' | 'Erledigt' | 'Abgelehnt';
+  status: 'Neu' | 'In Arbeit' | 'Testen' | 'Erledigt' | 'Abgelehnt';
   priority: 'Niedrig' | 'Mittel' | 'Hoch' | 'Kritisch';
   adminComment?: string;
   createdAt: number;
 }
 
+// 🆕 Panel-Typ für zentrale Verwaltung (identisch mit ReportView)
+type PanelType = 'debug' | 'feedback' | 'feedbackList' | 'changelog' | null;
+
 interface FeedbackSystemProps {
   currentEmail?: string;
   currentDebugLog?: string;
+  // 🆕 Zentrale Panel-Verwaltung
+  activePanel: PanelType;
+  onOpenPanel: (panelType: PanelType) => void;
+  onClosePanel: () => void;
 }
 
-export const FeedbackSystem = ({ currentEmail, currentDebugLog }: FeedbackSystemProps) => {
-  const [showModal, setShowModal] = useState(false);
-  const [showAdmin, setShowAdmin] = useState(false);
+export const FeedbackSystem = ({ 
+  currentEmail, 
+  currentDebugLog,
+  activePanel,
+  onOpenPanel,
+  onClosePanel
+}: FeedbackSystemProps) => {
   const [feedbackItems, setFeedbackItems] = useState<FeedbackItem[]>([]);
   const [newFeedback, setNewFeedback] = useState({
     type: 'Feature-Request' as 'Feature-Request' | 'Bug',
@@ -31,9 +42,13 @@ export const FeedbackSystem = ({ currentEmail, currentDebugLog }: FeedbackSystem
   });
   const [filter, setFilter] = useState({
     type: 'Alle' as 'Alle' | 'Feature-Request' | 'Bug',
-    status: 'Alle' as 'Alle' | 'Neu' | 'In Bearbeitung' | 'Erledigt' | 'Abgelehnt'
+    status: 'Alle' as 'Alle' | 'Neu' | 'In Arbeit' | 'Testen' | 'Erledigt' | 'Abgelehnt'
   });
   const [unreadCount, setUnreadCount] = useState(0);
+
+  // 🆕 Abgeleitete Panel-Zustände
+  const showModal = activePanel === 'feedback';
+  const showAdmin = activePanel === 'feedbackList';
 
   // LocalStorage Management
   useEffect(() => {
@@ -90,7 +105,7 @@ export const FeedbackSystem = ({ currentEmail, currentDebugLog }: FeedbackSystem
       priority: 'Mittel'
     });
     
-    setShowModal(false);
+    onClosePanel();
     setUnreadCount(prev => prev + 1);
     
     alert('✅ Feedback erfolgreich übermittelt! Vielen Dank für Ihr Feedback.');
@@ -145,10 +160,30 @@ export const FeedbackSystem = ({ currentEmail, currentDebugLog }: FeedbackSystem
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Neu': return '#6b7280';
-      case 'In Bearbeitung': return '#f59e0b';
+      case 'In Arbeit': return '#3b82f6';
+      case 'Testen': return '#f59e0b';
       case 'Erledigt': return '#10b981';
       case 'Abgelehnt': return '#ef4444';
       default: return '#6b7280';
+    }
+  };
+
+  // Workflow-Funktionen für Status-Übergänge
+  const getNextStatus = (currentStatus: string): string | null => {
+    switch (currentStatus) {
+      case 'Neu': return 'In Arbeit';
+      case 'In Arbeit': return 'Testen';
+      case 'Testen': return 'Erledigt';
+      default: return null;
+    }
+  };
+
+  const getStatusButtonText = (currentStatus: string): string => {
+    switch (currentStatus) {
+      case 'Neu': return '🚀 In Arbeit';
+      case 'In Arbeit': return '🧪 Testen';
+      case 'Testen': return '✅ Erledigt';
+      default: return '';
     }
   };
 
@@ -166,7 +201,7 @@ export const FeedbackSystem = ({ currentEmail, currentDebugLog }: FeedbackSystem
     <>
       {/* Feedback Button im Footer */}
       <button 
-        onClick={() => setShowModal(true)}
+        onClick={() => onOpenPanel('feedback')}
         className={styles.feedbackButton}
         title="Feedback geben - Feature-Requests und Bugs melden"
       >
@@ -176,10 +211,7 @@ export const FeedbackSystem = ({ currentEmail, currentDebugLog }: FeedbackSystem
       {/* Admin Button (nur wenn Feedback-Einträge vorhanden) */}
       {feedbackItems.length > 0 && (
         <button 
-          onClick={() => {
-            setShowAdmin(!showAdmin);
-            if (!showAdmin) markAsRead();
-          }}
+          onClick={() => onOpenPanel('feedbackList')}
           className={styles.adminButton}
           title="Feedback-Verwaltung"
         >
@@ -187,21 +219,21 @@ export const FeedbackSystem = ({ currentEmail, currentDebugLog }: FeedbackSystem
         </button>
       )}
 
-      {/* Feedback Modal */}
+      {/* Inline Feedback Panel */}
       {showModal && (
-        <div className={styles.modal}>
-          <div className={styles.modalContent}>
-            <div className={styles.modalHeader}>
-              <h3>💡 Feedback geben</h3>
-              <button 
-                onClick={() => setShowModal(false)} 
-                className={styles.closeButton}
-              >
-                ✕
-              </button>
-            </div>
-            
-            <div className={styles.modalBody}>
+        <div className={styles.feedbackPanel}>
+          <div className={styles.panelHeader}>
+            <h3>💡 Feedback geben</h3>
+            <button 
+              onClick={onClosePanel} 
+              className={styles.closeBtn}
+            >
+              ✕
+            </button>
+          </div>
+          
+          <div className={styles.panelContent}>
+            <div className={styles.formGrid}>
               <div className={styles.field}>
                 <label>Typ:</label>
                 <select 
@@ -245,36 +277,36 @@ export const FeedbackSystem = ({ currentEmail, currentDebugLog }: FeedbackSystem
                   className={styles.disabledInput}
                 />
               </div>
-
-              <div className={styles.field}>
-                <label>Beschreibung:</label>
-                <textarea 
-                  value={newFeedback.description}
-                  onChange={(e) => setNewFeedback({...newFeedback, description: e.target.value})}
-                  placeholder="Beschreiben Sie Ihr Anliegen..."
-                  rows={5}
-                />
-              </div>
-
-              {currentDebugLog && (
-                <div className={styles.field}>
-                  <label>
-                    <input 
-                      type="checkbox" 
-                      checked={newFeedback.includeDebugLog}
-                      onChange={(e) => setNewFeedback({...newFeedback, includeDebugLog: e.target.checked})}
-                    />
-                    Debug-Log anhängen (hilfreich für Fehleranalyse)
-                  </label>
-                </div>
-              )}
             </div>
-            
-            <div className={styles.modalFooter}>
+
+            <div className={styles.field}>
+              <label>Beschreibung:</label>
+              <textarea 
+                value={newFeedback.description}
+                onChange={(e) => setNewFeedback({...newFeedback, description: e.target.value})}
+                placeholder="Beschreiben Sie Ihr Anliegen..."
+                rows={4}
+              />
+            </div>
+
+            {currentDebugLog && (
+              <div className={styles.field}>
+                <label className={styles.checkboxLabel}>
+                  <input 
+                    type="checkbox" 
+                    checked={newFeedback.includeDebugLog}
+                    onChange={(e) => setNewFeedback({...newFeedback, includeDebugLog: e.target.checked})}
+                  />
+                  Debug-Log anhängen (hilfreich für Fehleranalyse)
+                </label>
+              </div>
+            )}
+
+            <div className={styles.panelActions}>
               <button onClick={submitFeedback} className={styles.submitButton}>
                 📤 Feedback senden
               </button>
-              <button onClick={() => setShowModal(false)} className={styles.cancelButton}>
+              <button onClick={onClosePanel} className={styles.cancelButton}>
                 Abbrechen
               </button>
             </div>
@@ -288,10 +320,15 @@ export const FeedbackSystem = ({ currentEmail, currentDebugLog }: FeedbackSystem
           <div className={styles.adminHeader}>
             <h3>📋 Feedback-Verwaltung ({feedbackItems.length} Einträge)</h3>
             <div className={styles.adminControls}>
+              {unreadCount > 0 && (
+                <button onClick={markAsRead} className={styles.markReadBtn}>
+                  ✅ Alle als gelesen ({unreadCount})
+                </button>
+              )}
               <button onClick={exportFeedback} className={styles.exportBtn}>
                 📊 CSV Export
               </button>
-              <button onClick={() => setShowAdmin(false)} className={styles.closeBtn}>
+              <button onClick={onClosePanel} className={styles.closeBtn}>
                 ✕
               </button>
             </div>
@@ -313,7 +350,8 @@ export const FeedbackSystem = ({ currentEmail, currentDebugLog }: FeedbackSystem
             >
               <option value="Alle">Alle Status</option>
               <option value="Neu">Neu</option>
-              <option value="In Bearbeitung">In Bearbeitung</option>
+              <option value="In Arbeit">In Arbeit</option>
+              <option value="Testen">Testen</option>
               <option value="Erledigt">Erledigt</option>
               <option value="Abgelehnt">Abgelehnt</option>
             </select>
@@ -361,12 +399,35 @@ export const FeedbackSystem = ({ currentEmail, currentDebugLog }: FeedbackSystem
                   </div>
 
                   <div className={styles.itemActions}>
+                    {/* Workflow-Buttons */}
+                    <div className={styles.workflowButtons}>
+                      {getNextStatus(item.status) && (
+                        <button 
+                          onClick={() => updateFeedbackStatus(item.id, getNextStatus(item.status) as any)}
+                          className={styles.workflowBtn}
+                        >
+                          {getStatusButtonText(item.status)}
+                        </button>
+                      )}
+                      {item.status !== 'Abgelehnt' && (
+                        <button 
+                          onClick={() => updateFeedbackStatus(item.id, 'Abgelehnt')}
+                          className={styles.rejectBtn}
+                        >
+                          ❌ Ablehnen
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Manueller Status-Select für Admin */}
                     <select 
                       value={item.status}
                       onChange={(e) => updateFeedbackStatus(item.id, e.target.value as any)}
+                      className={styles.statusSelect}
                     >
                       <option value="Neu">Neu</option>
-                      <option value="In Bearbeitung">In Bearbeitung</option>
+                      <option value="In Arbeit">In Arbeit</option>
+                      <option value="Testen">Testen</option>
                       <option value="Erledigt">Erledigt</option>
                       <option value="Abgelehnt">Abgelehnt</option>
                     </select>

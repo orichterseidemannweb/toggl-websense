@@ -13,6 +13,9 @@ interface ReportData {
   [key: string]: string;
 }
 
+// 🆕 Panel-Typ für zentrale Verwaltung
+type PanelType = 'debug' | 'feedback' | 'feedbackList' | 'changelog' | null;
+
 // Hilfsfunktion zum Konvertieren von Zeitdauer-Strings (HH:MM:SS) zu Minuten
 const parseTimeToMinutes = (timeStr: string): number => {
   if (!timeStr || timeStr === '-') return 0;
@@ -48,13 +51,28 @@ export const ReportView = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
+  // 🆕 ZENTRALE PANEL-VERWALTUNG: Nur ein Panel kann gleichzeitig geöffnet sein
+  const [activePanel, setActivePanel] = useState<PanelType>(null);
+  
   // 🆕 DEBUG STATE: Sammle alle Debug-Informationen
   const [debugInfo, setDebugInfo] = useState<string[]>([]);
-  const [showDebugPanel, setShowDebugPanel] = useState(false);
   const [copyButtonState, setCopyButtonState] = useState<'default' | 'copied'>('default');
   
   // 🆕 USER EMAIL STATE für Feedback-System
   const [userEmail, setUserEmail] = useState<string>('');
+  
+  // 🆕 PANEL-VERWALTUNGSFUNKTIONEN
+  const openPanel = (panelType: PanelType) => {
+    setActivePanel(panelType);
+  };
+  
+  const closePanel = () => {
+    setActivePanel(null);
+  };
+  
+  // Abgeleitete Zustände für Rückwärtskompatibilität
+  const showDebugPanel = activePanel === 'debug';
+  const showChangelogPanel = activePanel === 'changelog';
   
   // 🆕 DEBUG HELPER: Funktion zum Hinzufügen von Debug-Logs
   const addDebugLog = (category: string, data: any) => {
@@ -714,82 +732,197 @@ export const ReportView = () => {
           </span>
         )}
         
-        {/* 🆕 DEBUG PANEL TOGGLE */}
-        <button 
-          onClick={() => setShowDebugPanel(!showDebugPanel)} 
-          className={styles.infoBubble}
-        >
-          🔧 Debug-Info {showDebugPanel ? 'ausblenden' : 'anzeigen'} ({debugInfo.length})
-        </button>
-
-        {/* 🆕 FEEDBACK SYSTEM */}
+        {/* 🆕 FEEDBACK SYSTEM - Jetzt zuerst: 1. Feedback geben, 2. Feedback-Liste */}
         <FeedbackSystem 
           currentEmail={userEmail}
           currentDebugLog={debugInfo.join('\n\n')}
+          activePanel={activePanel}
+          onOpenPanel={openPanel}
+          onClosePanel={closePanel}
         />
+
+        {/* 🆕 DEBUG PANEL TOGGLE - Jetzt als letztes: 3. Debug-Info */}
+        <button 
+          onClick={() => openPanel('debug')} 
+          className={styles.infoBubble}
+        >
+          🔧 Debug-Info ({debugInfo.length})
+        </button>
+
+        {/* 🆕 CHANGELOG PANEL TOGGLE - 4. Changelog */}
+        <button 
+          onClick={() => openPanel('changelog')} 
+          className={styles.infoBubble}
+          title="Changelog anzeigen - Alle neuen Features und Verbesserungen"
+        >
+          📋 Changelog
+        </button>
+      </div>
+
+      {/* 🆕 VERSION DISPLAY */}
+      <div className={styles.versionContainer}>
+        <span className={styles.versionNumber}>v1.6.4</span>
       </div>
 
       {/* 🆕 DEBUG PANEL */}
       {showDebugPanel && (
-        <div className={styles.debugPanel} style={{
-          marginTop: '20px',
-          padding: '15px',
-          backgroundColor: '#f8f9fa',
-          border: '1px solid #dee2e6',
-          borderRadius: '5px'
-        }}>
-          <h3>🔧 Debug-Informationen</h3>
-          <p>Alle Debug-Logs für einfaches Kopieren und Teilen:</p>
-          
-          <div style={{ marginBottom: '10px', display: 'flex', gap: '12px' }}>
+        <div className={styles.debugPanel}>
+          <div className={styles.debugHeader}>
+            <h3>🔧 Debug-Informationen</h3>
             <button 
-              onClick={async () => {
-                const debugText = debugInfo.join('\n\n');
-                await navigator.clipboard.writeText(debugText);
-                setCopyButtonState('copied');
-                setTimeout(() => setCopyButtonState('default'), 2000);
-              }}
-              className={styles.exportButton}
-              style={{
-                background: copyButtonState === 'copied' 
-                  ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' 
-                  : 'rgba(255, 255, 255, 0.9)',
-                borderColor: copyButtonState === 'copied' 
-                  ? 'rgba(16, 185, 129, 0.3)' 
-                  : 'rgba(5, 150, 105, 0.3)',
-                color: copyButtonState === 'copied' ? 'white' : '#374151',
-                transition: 'all 0.3s ease'
-              }}
+              onClick={closePanel} 
+              className={styles.closeBtn}
             >
-              {copyButtonState === 'copied' ? '✅ Kopiert!' : '📋 In Zwischenablage kopieren'}
-            </button>
-            
-            <button 
-              onClick={() => setDebugInfo([])}
-              className={styles.exportButton}
-              style={{
-                borderColor: 'rgba(239, 68, 68, 0.3)'
-              }}
-            >
-              🗑️ Logs löschen
+              ✕
             </button>
           </div>
           
-          <textarea
-            value={debugInfo.join('\n\n')}
-            readOnly
-            style={{
-              width: '100%',
-              height: '400px',
-              fontFamily: 'monospace',
-              fontSize: '12px',
-              padding: '10px',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              backgroundColor: '#ffffff'
-            }}
-            placeholder="Debug-Informationen werden hier angezeigt..."
-          />
+          <div className={styles.debugContent}>
+            <p>Alle Debug-Logs für einfaches Kopieren und Teilen:</p>
+            
+            <div className={styles.debugControls}>
+              <button 
+                onClick={async () => {
+                  const debugText = debugInfo.join('\n\n');
+                  await navigator.clipboard.writeText(debugText);
+                  setCopyButtonState('copied');
+                  setTimeout(() => setCopyButtonState('default'), 2000);
+                }}
+                className={styles.exportButton}
+                style={{
+                  background: copyButtonState === 'copied' 
+                    ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' 
+                    : 'rgba(255, 255, 255, 0.9)',
+                  borderColor: copyButtonState === 'copied' 
+                    ? 'rgba(16, 185, 129, 0.3)' 
+                    : 'rgba(5, 150, 105, 0.3)',
+                  color: copyButtonState === 'copied' ? 'white' : '#374151',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                {copyButtonState === 'copied' ? '✅ Kopiert!' : '📋 In Zwischenablage kopieren'}
+              </button>
+              
+              <button 
+                onClick={() => setDebugInfo([])}
+                className={styles.exportButton}
+                style={{
+                  borderColor: 'rgba(239, 68, 68, 0.3)'
+                }}
+              >
+                🗑️ Logs löschen
+              </button>
+            </div>
+            
+            <textarea
+              value={debugInfo.join('\n\n')}
+              readOnly
+              placeholder="Debug-Informationen werden hier angezeigt..."
+            />
+          </div>
+        </div>
+      )}
+
+      {/* 🆕 CHANGELOG PANEL */}
+      {showChangelogPanel && (
+        <div className={styles.debugPanel}>
+          <div className={styles.debugHeader}>
+            <h3>📋 Changelog - Versionshistorie</h3>
+            <button 
+              onClick={closePanel} 
+              className={styles.closeBtn}
+            >
+              ✕
+            </button>
+          </div>
+          
+          <div className={styles.debugContent}>
+            <p>Alle neuen Features, Verbesserungen und Bugfixes:</p>
+            
+            <div className={styles.changelogContent}>
+              <div className={styles.changelogSection}>
+                <h4>🚀 Version 1.6.4 - Aktuell (2025-01-06)</h4>
+                <ul>
+                  <li><strong>🎯 Exklusives Panel-Management</strong> - Nur ein Panel gleichzeitig geöffnet</li>
+                  <li><strong>📋 Changelog-Panel</strong> - Vollständige Versionshistorie in der App</li>
+                  <li><strong>🔄 Optimierte Button-Reihenfolge</strong> - Feedback geben → Feedback-Liste → Debug-Info → Changelog</li>
+                  <li><strong>📍 Versionsnummer-Anzeige</strong> - Aktuelle Version elegant angezeigt</li>
+                  <li><strong>🎨 Zentrale Panel-Verwaltung</strong> - Automatisches Schließen bei Panel-Wechsel</li>
+                  <li><strong>✨ Konsistente Close-Buttons</strong> - Einheitliches X-Button Design</li>
+                </ul>
+              </div>
+
+              <div className={styles.changelogSection}>
+                <h4>🚀 Version 1.6.3 - Feedback-System (2025-06-07)</h4>
+                <ul>
+                  <li><strong>💡 Vollständiges Feedback-System</strong> - Feature-Requests und Bug-Reports direkt in der App</li>
+                  <li><strong>🎯 Admin-Panel</strong> - Professionelle Feedback-Verwaltung mit Status-Tracking</li>
+                  <li><strong>📧 Auto-Email-Erkennung</strong> - Automatische User-Email-Integration</li>
+                  <li><strong>🔧 Debug-Log-Anhang</strong> - Debug-Informationen direkt mit Feedback teilen</li>
+                </ul>
+              </div>
+
+              <div className={styles.changelogSection}>
+                <h4>🎯 Version 1.6.0 - Kritischer Bugfix (2025-06-07)</h4>
+                <ul>
+                  <li><strong>🐛 HAUPTPROBLEM GELÖST</strong> - Zeitzone-bedingte Zeitberechnungsfehler komplett behoben</li>
+                  <li><strong>⏰ 100% Toggl-Übereinstimmung</strong> - App-Zeiten stimmen exakt mit Toggl Interface überein</li>
+                  <li><strong>✅ Billing-Ready</strong> - Absolut verlässlich für professionelle Abrechnungen</li>
+                  <li><strong>🔍 Debug-System permanent</strong> - Elegantes Debug-Panel dauerhaft verfügbar</li>
+                </ul>
+              </div>
+
+              <div className={styles.changelogSection}>
+                <h4>🔒 Version 1.5.1 - Sicherheit & Portabilität (2025-01-07)</h4>
+                <ul>
+                  <li><strong>🔐 Report-ID Hardcoding entfernt</strong> - Keine sensiblen Daten mehr im Code</li>
+                  <li><strong>🌍 Universelle Portabilität</strong> - Funktioniert mit beliebigen öffentlichen Toggl-Reports</li>
+                  <li><strong>🎨 Login-Interface Redesign</strong> - Kompakter, cleaner Login</li>
+                  <li><strong>🛡️ Multi-Team-Fähigkeit</strong> - Jedes Team kann eigene Report-IDs verwenden</li>
+                </ul>
+              </div>
+
+              <div className={styles.changelogSection}>
+                <h4>✨ Version 1.5.0 - Major UI Redesign (2025-06-06)</h4>
+                <ul>
+                  <li><strong>🎨 Glasmorphism-Design</strong> - Einheitliches Bubble-Design-System</li>
+                  <li><strong>🔧 Alle Komponenten redesigned</strong> - StatusBar, Buttons, Login komplett überarbeitet</li>
+                  <li><strong>📱 Mobile Responsivität</strong> - Optimiert für alle Bildschirmgrößen</li>
+                  <li><strong>🎯 Moderne Design-Philosophie</strong> - Minimalismus meets Eleganz</li>
+                </ul>
+              </div>
+
+              <div className={styles.changelogSection}>
+                <h4>🚀 Version 1.4.0 - Revolutionary Bulk Export (2025-06-06)</h4>
+                <ul>
+                  <li><strong>📦 Ein-Klick-Export</strong> - Alle Kunden-PDFs mit einem Klick</li>
+                  <li><strong>🧠 Intelligente Logik</strong> - Automatische Kunden- und Projekt-Erkennung</li>
+                  <li><strong>🗜️ ZIP-Download</strong> - Alle PDFs organisiert in einer ZIP-Datei</li>
+                  <li><strong>📊 Progress-Tracking</strong> - Fortschrittsbalken mit Abbruch-Option</li>
+                </ul>
+              </div>
+
+              <div className={styles.changelogSection}>
+                <h4>📄 Version 1.2.0+ - PDF-Export & Features (2025-06-06)</h4>
+                <ul>
+                  <li><strong>📋 Vollständige PDF-Export-Funktionalität</strong> - Professionelle Tätigkeitsnachweise</li>
+                  <li><strong>🎨 Corporate Design</strong> - Firmenlogo und professionelles Layout</li>
+                  <li><strong>👁️ Spalten-Sichtbarkeits-Kontrolle</strong> - Tabellenspalten ein-/ausblenden</li>
+                  <li><strong>📅 MonthSelector</strong> - Einfache Monatsauswahl</li>
+                </ul>
+              </div>
+
+              <div className={styles.changelogSection}>
+                <h4>🎉 Version 1.0.0 - Erstes Release (2025-06-06)</h4>
+                <ul>
+                  <li><strong>🏗️ Grundlagen</strong> - React + TypeScript + Vite Setup</li>
+                  <li><strong>🔗 Toggl API Integration</strong> - Vollständige Datenanbindung</li>
+                  <li><strong>📊 Report-Visualisierung</strong> - Elegante Tabellendarstellung</li>
+                  <li><strong>🔐 Authentifizierung</strong> - Sichere API-Token-Verwaltung</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       )}
   
