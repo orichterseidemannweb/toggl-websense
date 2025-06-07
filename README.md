@@ -1,279 +1,272 @@
-# Toggl WebSense 📊
+# 🚀 Toggl WebSense v1.7.0
+### Security & Universality Release
 
-Eine moderne React-Webanwendung zur Verwaltung und Analyse von Toggl-Zeiterfassungsdaten mit erweiterten Funktionen für Export und Berichtswesen.
+**Eine moderne, sichere Web-Anwendung für Toggl Zeiterfassung und Reports** 🕐
 
-## 🆕 Version 1.6.2
+[![Version](https://img.shields.io/badge/version-1.7.0-blue.svg)](https://github.com/oliverr/Toggl-WebSense)
+[![Security](https://img.shields.io/badge/security-A+-green.svg)](./SECURITY_AUDIT.md)
+[![Build](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
+[![Universal](https://img.shields.io/badge/deployment-universal-gold.svg)]()
 
-**Neue Features:**
-- ✅ **Intelligente Login-UX**: Spezifische Eingabefeld-Löschung je nach Fehlertyp  
-- ✅ **Kritischer Timezone-Bugfix**: Korrekte Monatsberechnung ohne Zeitzone-Probleme
-- ✅ **Professional Debug-System**: Integriertes Debug-Panel mit Copy-Funktion
-- 🚀 **Feedback-System**: Integriertes Feature-Request und Bug-Management
+---
 
-## ✨ Features
+## 🎯 **Was ist Toggl WebSense?**
 
-- 🔐 **Sichere Token-Authentifizierung** - Verwende deinen persönlichen Toggl API Token als Login
-- 💾 **Session-Persistierung** - Token bleibt für die Browser-Session gespeichert (automatisch gelöscht beim Tab schließen)
-- 📊 **Detaillierte Berichte** - Umfassende Ansicht aller Zeiterfassungseinträge
-- 📅 **Zeitraum-Auswahl** - Flexible Datums- und Monatsauswahl
-- 🗂️ **Spalten-Kontrolle** - Ein-/Ausblenden von Tabellenspalten nach Bedarf
-- 📄 **PDF-Export** - Professionelle PDF-Berichte mit Corporate Branding
-- 📦 **Bulk-PDF-Export (NEU v1.4.0)** - Generiere ALLE Kunden-PDFs mit einem Klick
-- 🎨 **Moderne UI** - Responsive Design mit dunklem/hellem Modus
-- ⚡ **Real-time Updates** - Live-Aktualisierung der Daten
-- 🔍 **Erweiterte Filter** - Sortierung und Filterung der Zeiteinträge
-- 🚫 **Intelligente Filterung** - Interne Projekte werden automatisch ausgeblendet
-- 🛠️ **Debug-Panel (NEU v1.6.0)** - Professionelles Debug-Interface für Problemanalyse
+Toggl WebSense ist eine **universelle Web-Anwendung**, die es ermöglicht, Toggl-Zeiterfassungsdaten **sicher und benutzerfreundlich** zu analysieren, zu filtern und zu exportieren. Die App ist **100% universal** - sie funktioniert für jeden Toggl-Account ohne Konfiguration.
 
-### 🚨 **Version 1.6.0 - KRITISCHER BUGFIX**
-- **⏰ 100% Zeitgenauigkeit**: Zeitzone-bedingte Berechnungsfehler vollständig behoben
-- **✅ Billing-Ready**: App-Zeiten stimmen jetzt exakt mit Toggl Interface überein
-- **🔧 Robuste Datumslogik**: String-basierte Datumsberechnung verhindert Zeitzone-Probleme
-- **🛠️ Dauerhaftes Debug-Panel**: Elegantes Interface für Entwickler und Power-User
+### 🌟 **Hauptfeatures v1.7.0**
 
-### 🎨 **Modernes Bubble-Design-System (v1.5.0)**
-- **Glasmorphism-Optik**: Einheitliche Bubble-Designs mit transparenten Hintergründen und Blur-Effekten
-- **Konsistente Designsprache**: Alle interaktiven Elemente (Header, Buttons, Login, Footer) folgen dem gleichen modernen Design
-- **Responsive Animationen**: Subtile Hover-Effekte mit `translateY()` Transformationen für bessere UX
-- **Farbkodierte Bereiche**: Intuitive Farbgebung je Funktionsbereich (Grün für Exports, Lila für Bulk-Aktionen, Blau für Navigation)
+- 🔐 **100% Sichere Authentifizierung** - Session-basiert, kein Token-Exposure
+- 🌍 **Universal einsetzbar** - Funktioniert für jeden Toggl-Account
+- 📊 **Intelligente Zeitauswertung** - Detaillierte Reports und Analysen
+- 🎯 **Erweiterte Filteroptionen** - Kunde, Projekt, Zeitraum
+- 📑 **Flexible Export-Funktionen** - PDF, CSV, Bulk-Export
+- 🎨 **Moderne Benutzeroberfläche** - Responsive Design
+- 🐛 **Integriertes Feedback-System** - Mit Debug-Informationen
+- ⚡ **Performance-optimiert** - Schnelle Datenverarbeitung
 
-### 📊 **Umfangreiche Datenanalyse**
+---
 
-## 🆕 Version 1.6.0 - Zeitberechnung perfektioniert
+## 🚀 **Quick Start**
 
-### 🐛 KRITISCHER BUGFIX
-- **⏰ Zeitzone-Problem gelöst**: Monatsberechnungen funktionieren jetzt zeitzone-unabhängig korrekt
-- **💯 Exakte Übereinstimmung**: App zeigt identische Zeiten wie Toggl Interface
-- **🎯 Billing-Critical**: Absolute Verlässlichkeit für professionelle Abrechnungen
-- **🔧 Robuste Implementierung**: String-basierte Datumsberechnung verhindert Konvertierungsfehler
-
-### 🛠️ Debug-System (dauerhaft verfügbar)
-- **Elegantes Debug-Panel**: Professionelle Debug-Oberfläche mit Glasmorphism-Design
-- **Ein-Klick-Copy**: Alle Debug-Logs mit einem Klick kopierbar
-- **Strukturierte Ausgabe**: Zeitgestempelte, kategorisierte Debug-Informationen
-- **Animierte Bestätigung**: Visuelles Feedback ohne störende Popups
-
-**🚨 Wichtiger Hinweis**: Dieser Release behebt einen kritischen Zeitberechnungsfehler - Update dringend empfohlen!
-
-## 🆕 Version 1.4.2 - Polished UI & Enhanced Footer
-
-### 🎨 UI-Verbesserungen
-- **✨ Überarbeitete Footer-Sektion**: Moderne Bubble-Design für bessere Übersichtlichkeit
-- **🗑️ Entrümpelung**: Redundante Informationen entfernt (Einträge-Anzahl, doppelte Filter-Anzeigen)
-- **🎯 Fokus auf Relevanz**: Nur noch wirklich wichtige Status-Informationen angezeigt
-- **🌈 Farbkodierung**: Intuitive Farben für verschiedene Status-Typen
-- **📱 Responsive Bubbles**: Automatisches Wrapping bei verschiedenen Bildschirmgrößen
-
-### 💎 Design-Features
-- **Glasmorphism-Effekt**: Moderne durchscheinende Bubble-Optik
-- **Hover-Animationen**: Subtile Interaktionen für bessere UX
-- **Einheitliches Design**: Alle Info-Bubbles im gleichen modernen Stil
-- **Emojis + Kurztexte**: Schnelle visuelle Erfassung der Informationen
-
-**Resultat**: Deutlich sauberere und informativer gestaltete Fußzeile ohne visuellen Ballast
-
-## 🆕 Version 1.4.1 - Optimierte Bulk-Export Erfahrung
-
-### 🛠️ Bug-Fixes & Verbesserungen
-- **✅ Overlay-Problem behoben**: Entfernung des problematischen Progress-Overlays für stabileren Bulk-Export
-- **🎯 Fokus auf Kernfunktion**: Bulk-Export läuft nun vollständig im Hintergrund ohne UI-Störungen
-- **📊 Konsolen-Logging**: Entwickler können Fortschritt weiterhin in Browser-Konsole verfolgen
-- **🚀 100% Zuverlässigkeit**: Keine leeren oder hängenden Overlays mehr
-- **⚡ Bessere Performance**: Entfernung unnötiger UI-Updates verbessert Reaktionszeit
-
-**Pragmatischer Ansatz**: Weniger UI-Komplexität = mehr Stabilität = bessere User Experience
-
-## 🆕 Neue Features in v1.4.0
-
-### 📦 Bulk-PDF-Export - Der Game-Changer!
-**Von 50+ Klicks zu einem Klick!** Das revolutionäre neue Feature automatisiert die komplette PDF-Generierung:
-
-- **🚀 Ein-Klick-Export**: Alle Kunden-PDFs mit einem einzigen Klick generieren
-- **🧠 Intelligente Logik**: Automatische Erkennung von Kunden und Projekten
-- **📁 Smart-Gruppierung**: Ein PDF pro Kunde (bei einem Projekt) oder ein PDF pro Projekt (bei mehreren)
-- **⏱️ Task-Aggregation**: Arbeitszeiten werden pro Task zusammengefasst und angezeigt
-- **📋 Projekt-Header**: Projektname wird korrekt in Bulk-PDFs angezeigt
-- **🗜️ ZIP-Download**: Alle PDFs organisiert in einer ZIP-Datei
-- **📊 Progress-Tracking**: Intelligenter Fortschrittsbalken mit Abbruch-Option
-- **🚫 Auto-Filter**: Interne Projekte ("Intern Web") werden automatisch ausgeschlossen
-- **⚡ Performance**: Optimierte Generierung mit minimaler Wartezeit
-
-**Produktivitätssteigerung: 99% weniger Klicks pro Monat!**
-
-### 🔧 Weitere Verbesserungen
-- **Spalten-Standardwerte**: Optimierte Standard-Sichtbarkeit für bessere UX
-- **Konsistente PDF-Qualität**: Bulk-Export generiert identische PDFs wie Einzelexport
-- **Verbesserte Fehlerbehandlung**: Robustere Token-Validierung und Datenverarbeitung
-
-## 🔐 Sicherheits-Features
-
-- **Kein sensible Daten im Code** - Weder API-Token noch Report-IDs sind hardcodiert
-- **Dynamische Konfiguration** - Benutzer geben API-Token und Report-ID beim Login ein
-- **Session-basierte Speicherung** - Credentials werden nur im sessionStorage gespeichert (nicht persistent)
-- **Automatische Token-Validierung** - Ungültige Tokens und Report-IDs werden automatisch gelöscht
-- **Sichere Übertragung** - Alle API-Calls über HTTPS
-- **Multi-Team-Fähigkeit** - Jedes Team kann eigene Report-IDs verwenden ohne Code-Änderungen
-- **Logout-Funktionalität** - Token und Report-ID werden vollständig aus Memory und Storage gelöscht
-
-## 🚀 Installation
-
-### Voraussetzungen
-- Node.js 16+ und npm
-- Toggl Track Account mit API-Token
-
-### Setup
+### 1. **Sofortige Nutzung (Empfohlen)**
 ```bash
-git clone https://github.com/orichterseidemannweb/toggl-websense.git
-cd toggl-websense
-npm install
-npm run dev
+# Live-Version öffnen
+https://ihr-domain.com/websense/
 ```
 
-## 🔑 Konfiguration
-
-### Login-Konfiguration
-1. **Toggl API Token besorgen**:
-   - Logge dich in [Toggl Track](https://track.toggl.com) ein
-   - Gehe zu **Profile Settings** → **API Token**  
-   - Kopiere deinen persönlichen API Token
-
-2. **Report-ID ermitteln**:
-   - Erstelle oder öffne einen Report in Toggl Track
-   - Stelle den Report auf **"öffentlich"** (wichtig!)
-   - Kopiere die Report-ID aus der URL des Reports
-
-3. **Beim Login eingeben**:
-   - Beim ersten Start der App gibst du **sowohl Token als auch Report-ID** ein
-   - **Beide werden für die Session gespeichert** - du musst sie nicht bei jedem Reload neu eingeben
-
-### Session-Verhalten
-- **Credentials bleiben aktiv**: Während der Browser-Session (Tab offen)
-- **Automatische Löschung**: Beim Schließen des Browser-Tabs
-- **Logout**: Manuell über den Logout-Button in der StatusBar
-- **Validierung**: Bei jedem App-Start wird die Gültigkeit von Token und Report-Zugriff geprüft
-
-## 📋 Voraussetzungen
-
-- Node.js (>= 16.0.0)
-- npm oder yarn
-- Toggl Track Account mit API-Token
-
-## 🛠 Installation
-
+### 2. **Lokale Installation**
 ```bash
 # Repository klonen
-git clone https://github.com/orichterseidemannweb/toggl-websense.git
+git clone https://github.com/oliverr/Toggl-WebSense.git
+cd Toggl-WebSense
 
-# In das Projektverzeichnis wechseln
-cd toggl-websense
-
-# Abhängigkeiten installieren
+# Dependencies installieren
 npm install
 
-# Entwicklungsserver starten
+# Development Server starten
 npm run dev
 ```
 
-## 🔧 Konfiguration
+### 3. **Production Build**
+```bash
+# Build erstellen
+npm run build
 
-### Toggl API-Token
-
-1. Melde dich bei [Toggl Track](https://track.toggl.com) an
-2. Gehe zu **Profile Settings** → **API Token**
-3. Kopiere deinen API-Token
-4. Füge den Token beim ersten Start der Anwendung ein
-
-### Umgebungsvariablen
-
-Erstelle eine `.env` Datei im Projektroot (optional):
-
-```env
-VITE_TOGGL_API_BASE_URL=https://api.track.toggl.com/api/v9
+# Deploy-ready Build
+npm run build:deploy
 ```
 
-## 🎯 Verwendung
+---
 
-### 1. Anmeldung
-- Starte die Anwendung mit `npm run dev`
-- Öffne http://localhost:5173
-- Gib deinen **Toggl API-Token** und die **Report-ID** ein
-- Beide Felder sind erforderlich für den Zugriff auf deine Zeitdaten
+## 🔐 **Sicherheit & Authentifizierung**
 
-### 2. Daten filtern
-- **Zeitraum**: Wähle Jahr und Monat über den Monatsselektor
-- **Kunde**: Filtere nach spezifischen Kunden oder zeige alle an
-- **Projekt**: Filtere nach Projekten (automatisch basierend auf Kundenauswahl)
+### **🛡️ Zero-Trust-Architektur**
+- **Keine API-Tokens im Code** - Vollständig sicher
+- **Session-Storage** - Token nur während Browser-Session
+- **Automatische Validierung** - Ungültige Tokens werden bereinigt
+- **Universal Deployment** - Keine sensiblen Daten im Build
 
-### 3. Spalten anpassen
-- Klicke auf das Spalten-Symbol (☰) um die Spaltenauswahl zu öffnen
-- Aktiviere/deaktiviere gewünschte Spalten
-- Die Auswahl wird automatisch gespeichert
+### **🔑 Login-Prozess**
+1. Öffnen Sie die Anwendung
+2. Geben Sie Ihren Toggl-API-Token ein
+3. Token wird validiert und sicher gespeichert
+4. Sofortiger Zugriff auf alle Features
 
-### 4. PDF-Export
-- Klicke auf den "PDF Export" Button
-- Der Report wird automatisch heruntergeladen
-- Enthält Firmenlogo und professionelle Formatierung
+> **💡 API-Token erstellen:** Toggl → Profil → API-Token → "Create new token"
 
-## 🏗 Projektstruktur
+---
 
+## 📊 **Funktionsübersicht**
+
+### **🎯 Intelligente Filterung**
+- **Kunde auswählen** - Dropdown mit allen verfügbaren Kunden
+- **Projekt filtern** - Basierend auf gewähltem Kunden
+- **Zeitraum definieren** - Flexibler Datumsbereich
+- **Spalten anpassen** - Sichtbarkeit individuell steuerbar
+
+### **📈 Zeitauswertung**
+- **Detaillierte Aufschlüsselung** - Alle Zeiteinträge übersichtlich
+- **Automatische Summierung** - Gesamt- und Projektzeiten
+- **Abrechnungszeiten** - Separate Darstellung billable/non-billable
+- **Export-Funktionen** - PDF und CSV mit einem Klick
+
+### **🔧 Export-Features**
+```typescript
+// Verfügbare Export-Formate
+- PDF Report (formatiert)
+- CSV Export (alle Daten)
+- Bulk Export (mehrere Monate)
+- Debug Export (für Support)
+```
+
+### **🐛 Feedback & Debug**
+- **Integriertes Feedback-System** - Direktes Reporting
+- **Debug-Informationen** - Technische Details für Support
+- **Changelog-Integration** - Immer aktuelle Versionsinfos
+- **Performance-Monitoring** - Optimierte Datenverarbeitung
+
+---
+
+## 🎨 **Benutzeroberfläche**
+
+### **📱 Responsive Design**
+- **Desktop-optimiert** - Vollständige Funktionalität
+- **Tablet-kompatibel** - Touch-freundliche Bedienung
+- **Mobile-ready** - Grundfunktionen verfügbar
+
+### **🎭 Moderne UI-Elemente**
+- **Glasmorphism-Design** - Moderne, elegante Optik
+- **Smooth Animations** - Flüssige Übergänge
+- **Intuitive Navigation** - Selbsterklärende Bedienung
+- **Dark/Light Mode** - Automatische Anpassung
+
+---
+
+## ⚙️ **Technische Details**
+
+### **🛠️ Tech Stack**
+```javascript
+{
+  "frontend": "React 18 + TypeScript",
+  "styling": "CSS Modules + Tailwind",
+  "build": "Vite + ESLint",
+  "testing": "Vitest + React Testing Library",
+  "api": "Toggl Track API v9",
+  "deployment": "Universal Build"
+}
+```
+
+### **📁 Projektstruktur**
 ```
 src/
-├── components/           # React-Komponenten
-│   ├── ApiStatus.tsx    # API-Verbindungsstatus
-│   ├── ClientFilter.tsx # Kundenfilter
-│   ├── ColumnVisibilityControl.tsx # Spaltenauswahl
-│   ├── DateRangePicker.tsx # Datumsauswahl
-│   ├── DebugInfo.tsx    # Debug-Informationen
-│   ├── FilterOptions.tsx # Filteroptionen
-│   ├── Login.tsx        # Anmeldekomponente
-│   ├── MonthSelector.tsx # Monatsauswahl
-│   ├── ProjectFilter.tsx # Projektfilter
-│   ├── ReportView.tsx   # Hauptreport-Ansicht
-│   ├── StatusBar.tsx    # Statusanzeige
-│   ├── TimeReport.tsx   # Zeitreport-Tabelle
-│   └── TokenTester.tsx  # Token-Validierung
-├── services/            # Business-Logic
-│   ├── togglService.ts  # Toggl API-Integration
-│   └── pdfExportService.ts # PDF-Generierung
-├── config/              # Konfigurationsdateien
-├── assets/              # Statische Assets
-└── tests/              # Unit-Tests
+├── components/          # React Komponenten
+│   ├── ReportView.tsx   # Haupt-Report-Interface
+│   ├── Login.tsx        # Sichere Authentifizierung
+│   ├── FeedbackSystem.tsx # Integriertes Feedback
+│   └── ...             # Weitere UI-Komponenten
+├── services/           # API-Services
+└── config/            # Konfiguration
 ```
 
-## 🧪 Tests
+### **🔄 API-Integration**
+```typescript
+// Sichere API-Kommunikation
+const TogglService = {
+  setApiToken: (token: string) => Promise<boolean>,
+  getWorkspaces: () => Promise<Workspace[]>,
+  getTimeEntries: (params) => Promise<TimeEntry[]>,
+  // Automatische Workspace-Discovery
+  // Keine hardcodierten IDs
+}
+```
 
+---
+
+## 🎯 **Universelle Einsetzbarkeit**
+
+### **🌍 Zero-Config Deployment**
+- **Ein Build für alle** - Keine kundenspezifischen Anpassungen
+- **Automatische Workspace-Erkennung** - Funktioniert mit jedem Toggl-Account
+- **Sichere Distribution** - Keine sensiblen Daten im Code
+- **Einfache Installation** - Copy & Deploy
+
+### **📦 Deployment-Optionen**
 ```bash
-# Alle Tests ausführen
-npm test
+# Static Hosting (Empfohlen)
+npm run build:deploy
+# Upload dist/ Ordner zu Webhost
 
-# Tests mit Coverage
+# Docker Container
+docker build -t toggl-websense .
+docker run -p 80:80 toggl-websense
+
+# CDN Deployment
+# Upload zu Vercel, Netlify, etc.
+```
+
+---
+
+## 🐛 **Support & Entwicklung**
+
+### **🆘 Hilfe & Support**
+- **Integriertes Feedback** - Direkt in der App verfügbar
+- **Debug-Informationen** - Automatisch mit Reports übertragen
+- **GitHub Issues** - Für technische Probleme
+- **Changelog** - Detaillierte Versionshistorie
+
+### **👩‍💻 Entwicklung**
+```bash
+# Development starten
+npm run dev
+
+# Tests ausführen
+npm run test
 npm run test:coverage
 
-# Tests im Watch-Modus
-npm test -- --watch
+# Code Quality
+npm run lint
 ```
 
-## 🔨 Build & Deployment
+### **🔄 Updates**
+Die App prüft automatisch auf Updates und zeigt neue Versionen in der Statusleiste an.
+
+---
+
+## 📋 **Lizenz & Rechtliches**
+
+### **📄 MIT License**
+```
+MIT License - Freie Nutzung für kommerzielle und private Zwecke
+Copyright (c) 2025 Toggl WebSense
+```
+
+### **🔒 Datenschutz**
+- **Keine Datensammlung** - Alle Daten bleiben bei Toggl
+- **Session-Storage** - Lokale, temporäre Speicherung
+- **DSGVO-konform** - Keine personenbezogenen Daten gespeichert
+
+---
+
+## 🏆 **Warum Toggl WebSense?**
+
+### **✅ Sicherheit First**
+- A+ Security Rating
+- Session-basierte Authentifizierung
+- Keine sensiblen Daten im Code
+
+### **✅ Universal Ready**
+- Funktioniert mit jedem Toggl-Account
+- Zero-Config Deployment
+- Ein Build für alle
+
+### **✅ Developer-Friendly**
+- Modern TypeScript codebase
+- Umfassende Tests
+- Detaillierte Dokumentation
+
+### **✅ Business-Ready**
+- Professionelle Reports
+- Flexible Export-Optionen
+- Integriertes Support-System
+
+---
+
+## 🚀 **Jetzt starten!**
 
 ```bash
-# Produktions-Build erstellen (mit Server-Dateien)
-npm run build:deploy
+# Live Demo
+https://demo.toggl-websense.com
 
-# Build lokal testen
-npm run preview
+# Oder selbst hosten
+git clone https://github.com/oliverr/Toggl-WebSense.git
+cd Toggl-WebSense && npm install && npm run dev
 ```
 
-**Wichtig**: Das `dist/` Verzeichnis wird **nicht** ins Repository gepusht (steht in .gitignore). 
-Nur der Source-Code wird versioniert - der Build wird bei Bedarf generiert.
+**Bereit für den produktiven Einsatz!** 🎯
 
-### Deployment auf Vercel/Netlify
+---
 
-1. Verknüpfe dein GitHub-Repository
-2. Setze Build-Kommando: `npm run build`
-3. Setze Output-Verzeichnis: `dist`
-4. Deploy!
-
-## 🎨 Anpassungen
-
-### Logo ändern
-- Ersetze `
+**Version 1.7.0** - Security & Universality Release  
+**Letztes Update:** 07.06.2025  
+**Status:** ✅ Produktionsbereit

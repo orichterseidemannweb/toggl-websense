@@ -13,7 +13,7 @@ interface ReportData {
   [key: string]: string;
 }
 
-// 🆕 Panel-Typ für zentrale Verwaltung
+// Panel-Management für UI-Komponenten
 type PanelType = 'debug' | 'feedback' | 'feedbackList' | 'changelog' | null;
 
 // Hilfsfunktion zum Konvertieren von Zeitdauer-Strings (HH:MM:SS) zu Minuten
@@ -32,7 +32,7 @@ const parseTimeToMinutes = (timeStr: string): number => {
   return 0;
 };
 
-// 🆕 15-Minuten-Aufrundungsfunktion für Rechnungsstellung
+  // 15-Minuten-Aufrundung für Abrechnung
 const roundToQuarterHour = (minutes: number): number => {
   if (minutes === 0) return 0;
   return Math.ceil(minutes / 15) * 15;
@@ -51,17 +51,17 @@ export const ReportView = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  // 🆕 ZENTRALE PANEL-VERWALTUNG: Nur ein Panel kann gleichzeitig geöffnet sein
+  // Zentrale Panel-Verwaltung - exklusives Öffnen
   const [activePanel, setActivePanel] = useState<PanelType>(null);
   
-  // 🆕 DEBUG STATE: Sammle alle Debug-Informationen
+  // Debug-Informationen sammeln
   const [debugInfo, setDebugInfo] = useState<string[]>([]);
   const [copyButtonState, setCopyButtonState] = useState<'default' | 'copied'>('default');
   
-  // 🆕 USER EMAIL STATE für Feedback-System
+  // User-Email für Feedback-System
   const [userEmail, setUserEmail] = useState<string>('');
   
-  // 🆕 PANEL-VERWALTUNGSFUNKTIONEN
+  // Panel-Verwaltungsfunktionen
   const openPanel = (panelType: PanelType) => {
     setActivePanel(panelType);
   };
@@ -74,7 +74,7 @@ export const ReportView = () => {
   const showDebugPanel = activePanel === 'debug';
   const showChangelogPanel = activePanel === 'changelog';
   
-  // 🆕 DEBUG HELPER: Funktion zum Hinzufügen von Debug-Logs
+  // Debug-Log-Funktion
   const addDebugLog = (category: string, data: any) => {
     const timestamp = new Date().toLocaleTimeString();
     const logEntry = `[${timestamp}] ${category}: ${JSON.stringify(data, null, 2)}`;
@@ -143,7 +143,7 @@ export const ReportView = () => {
   const loadReport = async () => {
     setLoading(true);
     setError(null);
-    setDebugInfo([]); // 🆕 Reset Debug-Logs bei neuem Report-Load
+          setDebugInfo([]); // Reset Debug-Logs bei neuem Report-Load
     
     try {
       // 🔧 ULTIMATIVE LÖSUNG: Direkte String-Konstruktion ohne Date-Objekte
@@ -176,7 +176,7 @@ export const ReportView = () => {
       const startDate = new Date(startDateStr + 'T00:00:00.000Z');
       const endDate = new Date(endDateStr + 'T23:59:59.999Z');
 
-      // 🔍 DEBUG: Zeige alle relevanten Datumswerte
+      // Debug-Information für Datumswerte
       addDebugLog('🔍 MONATSAUSWAHL DEBUG', {
         'selectedDate Raw': selectedDate.toISOString(),
         'selectedDate String': selectedDate.toISOString().split('T')[0],
@@ -389,14 +389,7 @@ export const ReportView = () => {
       billableMinutes += billableDuration;
     });
     
-    // ✅ KOMPAKTE BESTÄTIGUNG für Schockemöhle
-    if (selectedClient === 'Paul Schockemöhle Pferdehaltung GmbH') {
-      console.log(`📊 SCHOCKEMÖHLE FINAL:`, {
-        'Total': formatMinutesToTime(totalMinutes),
-        'Billable': formatMinutesToTime(billableMinutes),
-        'Einträge': filteredData.length
-      });
-    }
+    // Finale Zusammenfassung berechnet
 
     return {
       totalHours: formatMinutesToTime(totalMinutes),
@@ -515,7 +508,7 @@ export const ReportView = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // 🆕 DEBUG CALLBACK SETUP: Registriere Debug-Callback beim TogglService
+      // Debug-Callback beim TogglService registrieren
   useEffect(() => {
     TogglService.setDebugCallback(addDebugLog);
     
@@ -524,7 +517,7 @@ export const ReportView = () => {
     };
   }, []);
 
-  // 🆕 USER EMAIL FETCH: Hole User-Email für Feedback-System
+  // User-Email für Feedback-System laden
   useEffect(() => {
     const fetchUserEmail = async () => {
       try {
@@ -742,11 +735,6 @@ export const ReportView = () => {
       )}
 
       <div className={styles.reportFooter}>
-        {!columnVisibility.beschreibung && reportData.length > 0 && (
-          <span className={`${styles.infoBubble} ${styles.infoBubbleGreen}`}>
-            📊 Tätigkeiten gruppiert
-          </span>
-        )}
         {summaryStats.allBillable && summaryStats.totalMinutes > 0 && (
           <span className={`${styles.infoBubble} ${styles.infoBubbleSuccess}`}>
             ✅ Alle Zeiten abrechenbar
@@ -777,32 +765,32 @@ export const ReportView = () => {
           📋 Feedback-Liste
         </button>
 
-        {/* 🆕 DEBUG PANEL TOGGLE - IMMER SICHTBAR - 3. Debug-Info */}
+        {/* Debug-Info Panel Toggle */}
         <button 
           onClick={() => openPanel('debug')} 
           className={styles.infoBubble}
-          style={{ backgroundColor: 'rgba(255, 0, 0, 0.1)' }} // DEBUG: Roter Hintergrund
+          style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
         >
           🔧 Debug-Info ({debugInfo.length})
         </button>
 
-        {/* 🆕 CHANGELOG PANEL TOGGLE - IMMER SICHTBAR - 4. Changelog */}
+        {/* Changelog Panel Toggle */}
         <button 
           onClick={() => openPanel('changelog')} 
           className={styles.infoBubble}
           title="Changelog anzeigen - Alle neuen Features und Verbesserungen"
-          style={{ backgroundColor: 'rgba(0, 255, 0, 0.1)' }} // DEBUG: Grüner Hintergrund
+          style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
         >
           📋 Changelog
         </button>
       </div>
 
-      {/* 🆕 VERSION DISPLAY */}
+      {/* Versionsnummer */}
       <div className={styles.versionContainer}>
-        <span className={styles.versionNumber}>v1.7.0</span>
+        <span className={styles.versionNumber}>v1.7.1</span>
       </div>
 
-      {/* 🆕 FEEDBACK SYSTEM PANELS - NUR PANELS, KEINE BUTTONS */}
+      {/* Feedback-System Panels */}
       <FeedbackSystem 
         currentEmail={userEmail}
         currentDebugLog={debugInfo.join('\n\n')}
@@ -811,7 +799,7 @@ export const ReportView = () => {
         onClosePanel={closePanel}
       />
 
-      {/* 🆕 DEBUG PANEL */}
+      {/* Debug Panel */}
       {showDebugPanel && (
         <div className={styles.debugPanel}>
           <div className={styles.debugHeader}>
@@ -870,7 +858,7 @@ export const ReportView = () => {
         </div>
       )}
 
-      {/* 🆕 CHANGELOG PANEL */}
+      {/* Changelog Panel */}
       {showChangelogPanel && (
         <div className={styles.debugPanel}>
           <div className={styles.debugHeader}>
@@ -887,6 +875,16 @@ export const ReportView = () => {
             <p>Alle neuen Features, Verbesserungen und Bugfixes:</p>
             
             <div className={styles.changelogContent}>
+              <div className={styles.changelogSection}>
+                <h4>✨ Version 1.7.1 - UI Cleanup (07.06.2025)</h4>
+                <ul>
+                  <li><strong>🧹 UI-BEREINIGUNG</strong> - "Tätigkeiten gruppiert" Info-Bubble entfernt</li>
+                  <li><strong>🎯 FOOTER-OPTIMIERUNG</strong> - Fokus auf relevante Informationen</li>
+                  <li><strong>✨ CLEANER UX</strong> - Weniger visuelle Ablenkung im Footer</li>
+                  <li><strong>📊 INFORMATIONSFILTER</strong> - Nur noch wichtige Status-Meldungen angezeigt</li>
+                </ul>
+              </div>
+
               <div className={styles.changelogSection}>
                 <h4>🚀 Version 1.7.0 - Security & Universality (07.06.2025)</h4>
                 <ul>

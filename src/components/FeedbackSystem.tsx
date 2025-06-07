@@ -14,13 +14,13 @@ export interface FeedbackItem {
   createdAt: number;
 }
 
-// 🆕 Panel-Typ für zentrale Verwaltung (identisch mit ReportView)
+// Panel-Management für UI-Komponenten
 type PanelType = 'debug' | 'feedback' | 'feedbackList' | 'changelog' | null;
 
 interface FeedbackSystemProps {
   currentEmail?: string;
   currentDebugLog?: string;
-  // 🆕 Zentrale Panel-Verwaltung
+  // Zentrale Panel-Verwaltung
   activePanel: PanelType;
   onOpenPanel: (panelType: PanelType) => void;
   onClosePanel: () => void;
@@ -46,7 +46,7 @@ export const FeedbackSystem = ({
   });
   const [unreadCount, setUnreadCount] = useState(0);
 
-  // 🆕 Abgeleitete Panel-Zustände
+  // Abgeleitete Panel-Zustände
   const showModal = activePanel === 'feedback';
   const showAdmin = activePanel === 'feedbackList';
 

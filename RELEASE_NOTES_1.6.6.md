@@ -1,6 +1,6 @@
 # 🚀 Toggl-WebSense Release 1.6.6 - Footer-Bugfix
 
-**Release Date:** 2025-01-06  
+**Release Date:** 2025-06-07  
 **Build:** v1.6.6  
 **Status:** ✅ Released to Production
 

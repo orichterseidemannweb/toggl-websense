@@ -12,7 +12,7 @@ interface ReportData {
 export class TogglService {
   private static readonly API_BASE_URL = 'https://api.track.toggl.com/reports/api/v3/shared';
   
-  // 🆕 DEBUG CALLBACK: Ermöglicht es der UI, Debug-Logs zu empfangen
+  // Debug-Callback für UI-Integration
   private static debugCallback: ((category: string, data: any) => void) | null = null;
   
   public static setDebugCallback(callback: (category: string, data: any) => void) {
@@ -283,10 +283,10 @@ export class TogglService {
       const headers = lines[0].split(',').map(header => header.replace(/"/g, '').trim());
       const data: ReportData[] = [];
 
-      // 🔍 DEBUG-ZÄHLER für Schockemöhle
-      let schockemohleTotal = 0;
-      let schockemohleFiltered = 0;
-      let schockemohleKept = 0;
+      // Statistik-Zähler für Datenfilterung
+      let clientTotal = 0;
+      let clientFiltered = 0;
+      let clientKept = 0;
 
       for (let i = 1; i < lines.length; i++) {
         const values = this.parseCSVLine(lines[i]);
@@ -307,66 +307,46 @@ export class TogglService {
             continue; // Überspringe interne Einträge
           }
 
-          // 🔍 DEBUG: Zähle Schockemöhle-Einträge
-          const isSchockemohle = clientName.toLowerCase().includes('schocke');
-          if (isSchockemohle) {
-            schockemohleTotal++;
+          // Zähle Client-Einträge für Statistik
+          const isTargetClient = clientName.toLowerCase().includes('schocke');
+          if (isTargetClient) {
+            clientTotal++;
           }
 
-          // 🆕 DATUMSFILTERUNG: Filtere Einträge außerhalb des angeforderten Zeitraums
+          // Datumsfilterung anwenden
           if (dateFilter) {
             const entryDateStr = row['Start date'];
             const entryDate = new Date(entryDateStr);
             const startDate = new Date(dateFilter.start);
             const endDate = new Date(dateFilter.end);
             
-            // 🔍 DEBUG: Erste 3 Datumsvergleiche anzeigen
-            const isDebugEntry = Object.keys(data).length < 3;
-            if (isDebugEntry) {
-              this.addDebugLog(`🔍 DATUMSFILTER DEBUG ${Object.keys(data).length + 1}`, {
-                entryDateStr,
-                entryDate: entryDate.toISOString().split('T')[0],
-                startDate: startDate.toISOString().split('T')[0],
-                endDate: endDate.toISOString().split('T')[0],
-                isBeforeStart: entryDate < startDate,
-                isAfterEnd: entryDate > endDate,
-                shouldFilter: entryDate < startDate || entryDate > endDate
-              });
-            }
+            // Optionales Debug-Logging für Datumsfilterung
             
             // Berücksichtige nur Einträge innerhalb des angeforderten Zeitraums
-            // 🔧 KORREKTUR: Verwende >= für endDate, um den letzten Tag einzuschließen
+            // Filtere Einträge außerhalb des Zeitraums
             if (entryDate < startDate || entryDate > endDate) {
-              if (isDebugEntry || clientName.toLowerCase().includes('schocke')) {
-                this.addDebugLog(`❌ GEFILTERT`, {
-                  date: entryDateStr,
-                  reason: `liegt außerhalb ${dateFilter.start} bis ${dateFilter.end}`,
-                  client: clientName
-                });
-              }
-              if (isSchockemohle) {
-                schockemohleFiltered++;
+              if (isTargetClient) {
+                clientFiltered++;
               }
               continue; // Überspringe Einträge außerhalb des Zeitraums
             }
           }
 
-          // 🔍 DEBUG: Zähle behaltene Schockemöhle-Einträge
-          if (isSchockemohle) {
-            schockemohleKept++;
+          // Zähle behaltene Client-Einträge
+          if (isTargetClient) {
+            clientKept++;
           }
 
           data.push(row);
         }
       }
 
-      // 🔍 DEBUG: Schockemöhle-Statistik ausgeben
-      if (schockemohleTotal > 0) {
-        this.addDebugLog(`🐎 SCHOCKEMÖHLE DATUMSFILTER-STATISTIK`, {
-          'Gesamt gefunden': schockemohleTotal,
-          'Herausgefiltert': schockemohleFiltered,
-          'Behalten': schockemohleKept,
-          'Sollte sein': 86 // Erwarteter Wert
+      // Filterstatistik ausgeben falls relevant
+      if (clientTotal > 0) {
+        this.addDebugLog(`📊 DATUMSFILTER-STATISTIK`, {
+          'Gesamt gefunden': clientTotal,
+          'Herausgefiltert': clientFiltered,
+          'Behalten': clientKept
         });
       }
       

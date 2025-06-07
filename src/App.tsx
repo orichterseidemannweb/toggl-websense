@@ -3,7 +3,7 @@ import styles from './App.module.css'
 import Login from './components/Login'
 import { StatusBar } from './components/StatusBar'
 import { TogglService } from './services/togglService'
-// import { DebugInfo } from './components/DebugInfo'
+
 import { ReportView } from './components/ReportView'
 
 function App() {
@@ -12,15 +12,12 @@ function App() {
   const [shouldClearInputs, setShouldClearInputs] = useState<{ token?: boolean; reportId?: boolean }>({});
 
   useEffect(() => {
-    // console.log('App gestartet, initialisiere Toggl');
     initializeToggl();
   }, []);
 
   const initializeToggl = async () => {
     try {
-      // console.log('Starte Toggl-Initialisierung');
       const success = await TogglService.initialize();
-      // console.log('Toggl-Initialisierung Ergebnis:', success);
       setIsAuthenticated(success);
       
       // Nur Fehlermeldung anzeigen wenn ein gespeicherter Token ungültig war
@@ -44,13 +41,11 @@ function App() {
 
   const handleTokenAndReportIdChange = async (token: string, reportId: string) => {
     try {
-      // console.log('Versuche Token und Report-ID zu setzen');
       const result = await TogglService.setApiTokenAndReportId(token, reportId);
-      // console.log('Token und Report-ID setzen Ergebnis:', result);
       setIsAuthenticated(result.success);
       
       if (!result.success) {
-        // 🆕 Spezifische Fehlermeldung und Clear-Logik je nach Fehlertyp
+        // Spezifische Fehlermeldung je nach Fehlertyp
         setError(result.message || 'Verbindung fehlgeschlagen');
         
         if (result.errorType === 'token') {
@@ -78,7 +73,7 @@ function App() {
   const handleLogout = () => {
     TogglService.clearToken(); // Token und Report-ID aus Memory und Storage löschen
     
-    // 🔧 Lösche auch die gespeicherten Auswahlen der ReportView
+    // Lösche auch die gespeicherten Auswahlen der ReportView
     sessionStorage.removeItem('toggl_selected_client');
     sessionStorage.removeItem('toggl_selected_project');
     sessionStorage.removeItem('toggl_selected_date');
@@ -111,7 +106,7 @@ function App() {
           )}
         </main>
       </div>
-      {/* <DebugInfo /> */}
+
     </div>
   )
 }

@@ -2,7 +2,7 @@
 
 Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert.
 
-## 🚀 Version 1.6.5 - Client Selection Requirement (2025-01-06)
+## 🚀 Version 1.6.5 - Client Selection Requirement (2025-06-07)
 
 ### ✨ Neue Features
 - **🎯 Client Selection Requirement** - Tabelle wird erst nach Kundenauswahl angezeigt
@@ -21,7 +21,7 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 
 ---
 
-## 🚀 Version 1.6.4 - UI-Harmonisierung Komplett (2025-01-06)
+## 🚀 Version 1.6.4 - UI-Harmonisierung Komplett (2025-06-06)
 
 ### ✨ Neue Features
 - **🎯 Exklusives Panel-Management** - Nur ein Panel kann gleichzeitig geöffnet sein für bessere UX
@@ -111,7 +111,7 @@ Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert
 
 **Dieser Release behebt einen kritischen Fehler, der zu ungenauen Zeitberechnungen führte - ein absolutes Must-Have-Update für alle Benutzer!**
 
-## [1.5.1] - 2025-01-07
+## [1.5.1] - 2025-06-06
 
 ### 🔒 Sicherheitsverbesserungen
 - **Report-ID Hardcoding entfernt**: Keine sensiblen Daten mehr im Source Code
