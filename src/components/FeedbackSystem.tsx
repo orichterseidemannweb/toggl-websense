@@ -199,25 +199,7 @@ export const FeedbackSystem = ({
 
   return (
     <>
-      {/* Feedback Button im Footer */}
-      <button 
-        onClick={() => onOpenPanel('feedback')}
-        className={styles.feedbackButton}
-        title="Feedback geben - Feature-Requests und Bugs melden"
-      >
-        💡 Feedback geben
-      </button>
-
-      {/* Admin Button (nur wenn Feedback-Einträge vorhanden) */}
-      {feedbackItems.length > 0 && (
-        <button 
-          onClick={() => onOpenPanel('feedbackList')}
-          className={styles.adminButton}
-          title="Feedback-Verwaltung"
-        >
-          📋 Feedback-Liste {unreadCount > 0 && <span className={styles.badge}>{unreadCount}</span>}
-        </button>
-      )}
+      {/* 🔧 BUTTONS SIND JETZT INLINE IM REPORTVIEW FOOTER - NUR PANELS HIER */}
 
       {/* Inline Feedback Panel */}
       {showModal && (

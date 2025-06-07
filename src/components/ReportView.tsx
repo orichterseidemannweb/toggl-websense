@@ -273,11 +273,12 @@ export const ReportView = () => {
 
   // Filtere und gruppiere die Daten basierend auf dem ausgewählten Kunden und Projekt
   const filteredData = useMemo(() => {
-    let filtered = reportData;
-    
-    if (selectedClient !== 'Kunde auswählen') {
-      filtered = filtered.filter(row => row['Client'] === selectedClient);
+    // ✅ CLIENT SELECTION REQUIREMENT: Zeige keine Daten wenn kein Kunde ausgewählt
+    if (selectedClient === 'Kunde auswählen') {
+      return [];
     }
+    
+    let filtered = reportData.filter(row => row['Client'] === selectedClient);
     
     if (selectedProject !== 'Projekt auswählen' && shouldShowProjectFilter) {
       filtered = filtered.filter(row => row['Project'] === selectedProject);
@@ -684,36 +685,61 @@ export const ReportView = () => {
         />
       )}
 
-      <div className={styles.tableContainer}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              {visibleColumns.map(column => (
-                <th key={column.field}>{column.header}</th>
+      {/* ✅ CLIENT SELECTION REQUIREMENT: Zeige Nachricht oder Tabelle */}
+      {selectedClient === 'Kunde auswählen' ? (
+        <div className={styles.noClientSelectedContainer}>
+          <div className={styles.noClientSelectedCard}>
+            <div className={styles.noClientSelectedIcon}>
+              👤
+            </div>
+            <h3 className={styles.noClientSelectedTitle}>
+              Kunde auswählen
+            </h3>
+            <p className={styles.noClientSelectedText}>
+              Bitte wählen Sie zunächst einen Kunden aus der Liste oben aus, 
+              um die entsprechenden Zeiterfassungsdaten anzuzeigen.
+            </p>
+            <div className={styles.noClientSelectedHint}>
+              💡 Nach der Kundenauswahl werden alle relevanten Projekte und Zeiten für den ausgewählten Zeitraum geladen.
+            </div>
+          </div>
+        </div>
+      ) : filteredData.length > 0 ? (
+        <div className={styles.tableContainer}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                {visibleColumns.map(column => (
+                  <th key={column.field}>{column.header}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {dataWithVirtualColumns.map((row, index) => (
+                <tr key={index}>
+                  {visibleColumns.map(column => (
+                    <td key={column.field}>{row[column.field]}</td>
+                  ))}
+                </tr>
               ))}
-            </tr>
-          </thead>
-          <tbody>
-            {dataWithVirtualColumns.map((row, index) => (
-              <tr key={index}>
-                {visibleColumns.map(column => (
-                  <td key={column.field}>{row[column.field]}</td>
-                ))}
-              </tr>
-            ))}
-            {/* Zusammenfassungszeile */}
-            {filteredData.length > 0 && (
-              <tr className={styles.summaryRow}>
-                {visibleColumns.map(column => (
-                  <td key={`summary-${column.field}`} className={styles.summaryCell}>
-                    {summaryRow[column.field]}
-                  </td>
-                ))}
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+              {/* Zusammenfassungszeile */}
+              {filteredData.length > 0 && (
+                <tr className={styles.summaryRow}>
+                  {visibleColumns.map(column => (
+                    <td key={`summary-${column.field}`} className={styles.summaryCell}>
+                      {summaryRow[column.field]}
+                    </td>
+                  ))}
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className={styles.empty}>
+          Keine Daten für den ausgewählten Kunden und Zeitraum verfügbar.
+        </div>
+      )}
 
       <div className={styles.reportFooter}>
         {!columnVisibility.beschreibung && reportData.length > 0 && (
@@ -732,28 +758,40 @@ export const ReportView = () => {
           </span>
         )}
         
-        {/* 🆕 FEEDBACK SYSTEM - Jetzt zuerst: 1. Feedback geben, 2. Feedback-Liste */}
-        <FeedbackSystem 
-          currentEmail={userEmail}
-          currentDebugLog={debugInfo.join('\n\n')}
-          activePanel={activePanel}
-          onOpenPanel={openPanel}
-          onClosePanel={closePanel}
-        />
+        {/* 🆕 FEEDBACK BUTTONS - JETZT INLINE IM FOOTER - 1. Feedback geben */}
+        <button 
+          onClick={() => openPanel('feedback')}
+          className={styles.infoBubble}
+          title="Feedback geben - Feature-Requests und Bugs melden"
+        >
+          💡 Feedback geben
+        </button>
 
-        {/* 🆕 DEBUG PANEL TOGGLE - Jetzt als letztes: 3. Debug-Info */}
+        {/* 🆕 FEEDBACK-LISTE BUTTON - NUR WENN ENTRIES VORHANDEN - 2. Feedback-Liste */}
+        {/* TODO: Feedback Count Logic hier implementieren */}
+        <button 
+          onClick={() => openPanel('feedbackList')}
+          className={styles.infoBubble}
+          title="Feedback-Verwaltung"
+        >
+          📋 Feedback-Liste
+        </button>
+
+        {/* 🆕 DEBUG PANEL TOGGLE - IMMER SICHTBAR - 3. Debug-Info */}
         <button 
           onClick={() => openPanel('debug')} 
           className={styles.infoBubble}
+          style={{ backgroundColor: 'rgba(255, 0, 0, 0.1)' }} // DEBUG: Roter Hintergrund
         >
           🔧 Debug-Info ({debugInfo.length})
         </button>
 
-        {/* 🆕 CHANGELOG PANEL TOGGLE - 4. Changelog */}
+        {/* 🆕 CHANGELOG PANEL TOGGLE - IMMER SICHTBAR - 4. Changelog */}
         <button 
           onClick={() => openPanel('changelog')} 
           className={styles.infoBubble}
           title="Changelog anzeigen - Alle neuen Features und Verbesserungen"
+          style={{ backgroundColor: 'rgba(0, 255, 0, 0.1)' }} // DEBUG: Grüner Hintergrund
         >
           📋 Changelog
         </button>
@@ -761,8 +799,17 @@ export const ReportView = () => {
 
       {/* 🆕 VERSION DISPLAY */}
       <div className={styles.versionContainer}>
-        <span className={styles.versionNumber}>v1.6.4</span>
+        <span className={styles.versionNumber}>v1.6.6</span>
       </div>
+
+      {/* 🆕 FEEDBACK SYSTEM PANELS - NUR PANELS, KEINE BUTTONS */}
+      <FeedbackSystem 
+        currentEmail={userEmail}
+        currentDebugLog={debugInfo.join('\n\n')}
+        activePanel={activePanel}
+        onOpenPanel={openPanel}
+        onClosePanel={closePanel}
+      />
 
       {/* 🆕 DEBUG PANEL */}
       {showDebugPanel && (
@@ -841,7 +888,17 @@ export const ReportView = () => {
             
             <div className={styles.changelogContent}>
               <div className={styles.changelogSection}>
-                <h4>🚀 Version 1.6.4 - Aktuell (2025-01-06)</h4>
+                <h4>🚀 Version 1.6.6 - Aktuell (2025-01-06)</h4>
+                <ul>
+                  <li><strong>🔧 KRITISCHER BUGFIX</strong> - Debug-Info & Changelog Buttons verschwinden nicht mehr beim Feedback-Panel öffnen</li>
+                  <li><strong>🏗️ Footer-Container-Fix</strong> - Alle Buttons sind jetzt im gleichen Container und immer sichtbar</li>
+                  <li><strong>🎯 Verbesserte UX</strong> - Debugging während Feedback-Nutzung wieder möglich</li>
+                  <li><strong>✅ Container-Konsistenz</strong> - FeedbackSystem-Buttons inline im Footer für permanente Sichtbarkeit</li>
+                </ul>
+              </div>
+
+              <div className={styles.changelogSection}>
+                <h4>🚀 Version 1.6.4 - Panel-Management (2025-01-06)</h4>
                 <ul>
                   <li><strong>🎯 Exklusives Panel-Management</strong> - Nur ein Panel gleichzeitig geöffnet</li>
                   <li><strong>📋 Changelog-Panel</strong> - Vollständige Versionshistorie in der App</li>
