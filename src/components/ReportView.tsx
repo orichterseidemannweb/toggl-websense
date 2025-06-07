@@ -17,9 +17,21 @@ const parseTimeToMinutes = (timeStr: string): number => {
   if (!timeStr || timeStr === '-') return 0;
   const parts = timeStr.split(':');
   if (parts.length === 3) {
-    return parseInt(parts[0]) * 60 + parseInt(parts[1]) + parseInt(parts[2]) / 60;
+    const hours = parseInt(parts[0]);
+    const minutes = parseInt(parts[1]);  
+    const seconds = parseInt(parts[2]);
+    const totalMinutes = hours * 60 + minutes + seconds / 60;
+    
+    return totalMinutes;
   }
+  console.warn(`⚠️ Ungültiges Zeitformat: "${timeStr}"`);
   return 0;
+};
+
+// 🆕 15-Minuten-Aufrundungsfunktion für Rechnungsstellung
+const roundToQuarterHour = (minutes: number): number => {
+  if (minutes === 0) return 0;
+  return Math.ceil(minutes / 15) * 15;
 };
 
 // Hilfsfunktion zum Konvertieren von Minuten zurück zu HH:MM:SS Format
@@ -34,13 +46,41 @@ export const ReportView = () => {
   const [reportData, setReportData] = useState<ReportData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedClient, setSelectedClient] = useState<string>('Kunde auswählen');
-  const [selectedProject, setSelectedProject] = useState<string>('Projekt auswählen');
+  
+  // 🆕 DEBUG STATE: Sammle alle Debug-Informationen
+  const [debugInfo, setDebugInfo] = useState<string[]>([]);
+  const [showDebugPanel, setShowDebugPanel] = useState(false);
+  const [copyButtonState, setCopyButtonState] = useState<'default' | 'copied'>('default');
+  
+  // 🆕 DEBUG HELPER: Funktion zum Hinzufügen von Debug-Logs
+  const addDebugLog = (category: string, data: any) => {
+    const timestamp = new Date().toLocaleTimeString();
+    const logEntry = `[${timestamp}] ${category}: ${JSON.stringify(data, null, 2)}`;
+    setDebugInfo(prev => [...prev, logEntry]);
+    console.log(`${category}:`, data); // Behalte auch Console-Log
+  };
+  
+  // Lade gespeicherte Auswahlen nur für die aktuelle Session
+  const [selectedClient, setSelectedClient] = useState<string>(() => {
+    const saved = sessionStorage.getItem('toggl_selected_client');
+    return saved || 'Kunde auswählen';
+  });
+  
+  const [selectedProject, setSelectedProject] = useState<string>(() => {
+    const saved = sessionStorage.getItem('toggl_selected_project');
+    return saved || 'Projekt auswählen';
+  });
+  
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
+    const saved = sessionStorage.getItem('toggl_selected_date');
+    if (saved) {
+      return new Date(saved);
+    }
     // Standard: aktueller Monat
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
+  
   const [columnVisibility, setColumnVisibility] = useState<ColumnVisibilityState>({
     teammitglieder: false, // Standardmäßig deaktiviert
     beschreibung: false,   // Standardmäßig deaktiviert
@@ -58,25 +98,133 @@ export const ReportView = () => {
   // Bulk Export State (vereinfacht - nur Abbruch-Flag)
   const [bulkExportCancelled, setBulkExportCancelled] = useState(false);
 
+  // Hilfsfunktionen für das Speichern der Auswahlen (nur für Session)
+  const handleClientChange = (client: string) => {
+    setSelectedClient(client);
+    sessionStorage.setItem('toggl_selected_client', client);
+    
+    // Reset Projekt-Auswahl wenn Kunde geändert wird
+    setSelectedProject('Projekt auswählen');
+    sessionStorage.setItem('toggl_selected_project', 'Projekt auswählen');
+  };
+
+  const handleProjectChange = (project: string) => {
+    setSelectedProject(project);
+    sessionStorage.setItem('toggl_selected_project', project);
+  };
+
+  const handleDateChange = (date: Date) => {
+    setSelectedDate(date);
+    sessionStorage.setItem('toggl_selected_date', date.toISOString());
+  };
+
   const loadReport = async () => {
     setLoading(true);
     setError(null);
+    setDebugInfo([]); // 🆕 Reset Debug-Logs bei neuem Report-Load
+    
     try {
-      // Hole Daten für den ausgewählten Monat
-      const startDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
-      const endDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
+      // 🔧 ULTIMATIVE LÖSUNG: Direkte String-Konstruktion ohne Date-Objekte
+      // Vermeide alle Zeitzone-Probleme durch direkte ISO-String-Erstellung
+      
+      // Extrahiere Jahr und Monat aus dem angezeigten Monatsnamen
+      const monthNameMatch = selectedDate.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' }).match(/(\w+)\s+(\d+)/);
+      let targetYear = selectedDate.getFullYear();
+      let targetMonth = selectedDate.getMonth(); // 0-basiert
+      
+      if (monthNameMatch) {
+        const [, monthName, yearStr] = monthNameMatch;
+        const monthIndex = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+                           'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'].indexOf(monthName);
+        if (monthIndex !== -1) {
+          targetMonth = monthIndex;
+          targetYear = parseInt(yearStr);
+        }
+      }
+      
+      // Konstruiere Datum-Strings direkt ohne Date-Objekte (keine Zeitzone-Probleme!)
+      const targetMonthPadded = String(targetMonth + 1).padStart(2, '0'); // +1 da 0-basiert zu 1-basiert
+      const startDateStr = `${targetYear}-${targetMonthPadded}-01`;
+      
+      // Berechne den letzten Tag des Monats
+      const daysInMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
+      const endDateStr = `${targetYear}-${targetMonthPadded}-${String(daysInMonth).padStart(2, '0')}`;
+      
+      // Erstelle Date-Objekte nur für die API-Aufrufe (aber verwende String-Werte für Debugging)
+      const startDate = new Date(startDateStr + 'T00:00:00.000Z');
+      const endDate = new Date(endDateStr + 'T23:59:59.999Z');
+
+      // 🔍 DEBUG: Zeige alle relevanten Datumswerte
+      addDebugLog('🔍 MONATSAUSWAHL DEBUG', {
+        'selectedDate Raw': selectedDate.toISOString(),
+        'selectedDate String': selectedDate.toISOString().split('T')[0],
+        'selectedMonth Name': selectedDate.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' }),
+        'selectedMonth Number (getMonth)': selectedDate.getMonth(),
+        'selectedMonth Number (angezeigt)': selectedDate.getMonth() + 1,
+        'selectedYear (getFullYear)': selectedDate.getFullYear(),
+        'KORRIGIERT - targetYear': targetYear,
+        'KORRIGIERT - targetMonth (0-basiert)': targetMonth,
+        'KORRIGIERT - targetMonth (angezeigt)': targetMonth + 1,
+        'KONSTRUIERTE STRINGS - Start': startDateStr,
+        'KONSTRUIERTE STRINGS - Ende': endDateStr,
+        'KONSTRUIERTE STRINGS - Tage im Monat': daysInMonth,
+        'berechneter Start (Date-Objekt)': startDate.toISOString().split('T')[0],
+        'berechnetes Ende (Date-Objekt)': endDate.toISOString().split('T')[0]
+      });
 
       const csvData = await TogglService.fetchCSVReport({
-        start_date: startDate.toISOString().split('T')[0],
-        end_date: endDate.toISOString().split('T')[0],
+        start_date: startDateStr,
+        end_date: endDateStr,
         order_field: 'date',
         order_desc: true
       });
 
-      const parsedData = await TogglService.parseCSVData(csvData);
+      // ✅ KORREKTE DATUMSFILTERUNG: Verwende die direkten String-Werte
+      const parsedData = await TogglService.parseCSVData(csvData, {
+        start: startDateStr,
+        end: endDateStr
+      });
+      
+      // 📊 KOMPAKTE BESTÄTIGUNG nur für Schockemöhle
+      if (selectedClient === 'Paul Schockemöhle Pferdehaltung GmbH') {
+        const schockemohleEntries = parsedData.filter(row => 
+          row['Client'] === 'Paul Schockemöhle Pferdehaltung GmbH'
+        );
+        
+        let totalMinutes = 0;
+        let billableMinutes = 0;
+        
+        schockemohleEntries.forEach(entry => {
+          const duration = parseTimeToMinutes(entry['Duration'] || '');
+          const isBillable = entry['Billable'] === 'Yes' || entry['Billable'] === 'Ja';
+          totalMinutes += duration;
+          if (isBillable) billableMinutes += duration;
+        });
+        
+        addDebugLog(`✅ FINAL SCHOCKEMÖHLE (${startDateStr} bis ${endDateStr})`, {
+          'Total': formatMinutesToTime(totalMinutes),
+          'Billable': formatMinutesToTime(billableMinutes),
+          'Einträge': schockemohleEntries.length,
+          'Erste 3 Einträge': schockemohleEntries.slice(0, 3).map(entry => ({
+            Date: entry['Start date'],
+            Duration: entry['Duration'],
+            Billable: entry['Billable'],
+            Description: entry['Description']?.substring(0, 50) + '...'
+          }))
+        });
+      }
+      
       setReportData(parsedData);
+      addDebugLog('📋 REPORT DATA LOADED', {
+        'Total Entries': parsedData.length,
+        'Selected Client': selectedClient,
+        'Selected Project': selectedProject
+      });
+      
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Fehler beim Laden des Reports');
+      const errorMsg = err instanceof Error ? err.message : 'Fehler beim Laden des Reports';
+      addDebugLog('❌ ERROR', { error: errorMsg });
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -148,9 +296,18 @@ export const ReportView = () => {
           if (existing['User'] !== row['User']) {
             existing['User'] = 'Verschiedene Teammitglieder';
           }
-          if (existing['Billable'] !== row['Billable']) {
-            existing['Billable'] = 'Gemischt';
+          
+          // 🔧 KORREKTUR: Billable-Status basierend auf tatsächlichen abrechenbaren Minuten
+          if (billableMinutes > 0) {
+            if (billableMinutes === totalMinutes) {
+              existing['Billable'] = 'Yes'; // Alles abrechenbar
+            } else {
+              existing['Billable'] = 'Teilweise'; // Teilweise abrechenbar (war vorher "Gemischt")
+            }
+          } else {
+            existing['Billable'] = 'No'; // Nichts abrechenbar
           }
+          
           if (existing['Start date'] !== row['Start date']) {
             existing['Start date'] = 'Verschiedene Daten';
           }
@@ -179,7 +336,9 @@ export const ReportView = () => {
     
     // Für nicht-gruppierte Daten: Berechne abrechenbare Zeit für jede Zeile
     return filtered.map(row => {
-      const isBillable = row['Billable'] === 'Yes' || row['Billable'] === 'Ja';
+      const isBillable = row['Billable'] === 'Yes' || row['Billable'] === 'Ja' || row['Billable'] === 'Teilweise' || row['Billable'] === 'Gemischt';
+      // 🔧 KORREKTUR: Für "Teilweise"/"Gemischt" sollte die ganze Duration als abrechenbar gelten
+      // da die Gruppierung bereits die korrekte Teilsumme berechnet hat
       return {
         ...row,
         'BillableTime': isBillable ? row['Duration'] : '0:00:00'
@@ -191,15 +350,30 @@ export const ReportView = () => {
   const summaryStats = useMemo(() => {
     let totalMinutes = 0;
     let billableMinutes = 0;
-
-    filteredData.forEach(row => {
+    
+    filteredData.forEach((row, index) => {
       const duration = parseTimeToMinutes(row['Duration'] || '');
-      totalMinutes += duration;
       
-      if (row['Billable'] === 'Yes' || row['Billable'] === 'Ja') {
-        billableMinutes += duration;
+      // 🔧 KORREKTUR: Verwende die bereits berechnete BillableTime statt den Billable-Status
+      let billableDuration = parseTimeToMinutes(row['BillableTime'] || '0:00:00');
+      
+      // 🚨 NOTFALL-KORREKTUR: Für "Gemischt"/"Teilweise" mit BillableTime = 0, verwende Duration
+      if ((row['Billable'] === 'Gemischt' || row['Billable'] === 'Teilweise') && billableDuration === 0) {
+        billableDuration = duration; // Verwende die gesamte Dauer als abrechenbar
       }
+      
+      totalMinutes += duration;
+      billableMinutes += billableDuration;
     });
+    
+    // ✅ KOMPAKTE BESTÄTIGUNG für Schockemöhle
+    if (selectedClient === 'Paul Schockemöhle Pferdehaltung GmbH') {
+      console.log(`📊 SCHOCKEMÖHLE FINAL:`, {
+        'Total': formatMinutesToTime(totalMinutes),
+        'Billable': formatMinutesToTime(billableMinutes),
+        'Einträge': filteredData.length
+      });
+    }
 
     return {
       totalHours: formatMinutesToTime(totalMinutes),
@@ -209,7 +383,7 @@ export const ReportView = () => {
       billableMinutes,
       allBillable: totalMinutes === billableMinutes && totalMinutes > 0
     };
-  }, [filteredData]);
+  }, [filteredData, selectedClient]);
 
   // Erstelle Mapping zwischen deutschen Namen und Feldnamen
   const columnMapping = {
@@ -297,11 +471,6 @@ export const ReportView = () => {
     return row;
   }, [visibleColumns, summaryStats]);
 
-  // Reset Projekt-Auswahl wenn ein neuer Kunde ausgewählt wird
-  useEffect(() => {
-    setSelectedProject('Projekt auswählen');
-  }, [selectedClient]);
-
   // Auto-load Report nur wenn API-Token vorhanden ist
   useEffect(() => {
     const apiToken = TogglService.getApiToken();
@@ -321,6 +490,15 @@ export const ReportView = () => {
     }, 500);
 
     return () => clearTimeout(timer);
+  }, []);
+
+  // 🆕 DEBUG CALLBACK SETUP: Registriere Debug-Callback beim TogglService
+  useEffect(() => {
+    TogglService.setDebugCallback(addDebugLog);
+    
+    return () => {
+      TogglService.clearDebugCallback();
+    };
   }, []);
 
   const exportToPDF = async () => {
@@ -433,14 +611,14 @@ export const ReportView = () => {
 
       <MonthSelector
         selectedDate={selectedDate}
-        onDateChange={setSelectedDate}
+        onDateChange={handleDateChange}
       />
 
       {availableClients.length > 0 && (
         <ClientFilter
           clients={availableClients}
           selectedClient={selectedClient}
-          onFilterChange={setSelectedClient}
+          onFilterChange={handleClientChange}
         />
       )}
 
@@ -448,7 +626,7 @@ export const ReportView = () => {
         <ProjectFilter
           projects={availableProjects}
           selectedProject={selectedProject}
-          onFilterChange={setSelectedProject}
+          onFilterChange={handleProjectChange}
           clientName={selectedClient}
         />
       )}
@@ -505,9 +683,80 @@ export const ReportView = () => {
             ⚠️ Gemischte Zeiten
           </span>
         )}
+        
+        {/* 🆕 DEBUG PANEL TOGGLE */}
+        <button 
+          onClick={() => setShowDebugPanel(!showDebugPanel)} 
+          className={styles.infoBubble}
+        >
+          🔧 Debug-Info {showDebugPanel ? 'ausblenden' : 'anzeigen'} ({debugInfo.length})
+        </button>
       </div>
 
-
-    </div>
+      {/* 🆕 DEBUG PANEL */}
+      {showDebugPanel && (
+        <div className={styles.debugPanel} style={{
+          marginTop: '20px',
+          padding: '15px',
+          backgroundColor: '#f8f9fa',
+          border: '1px solid #dee2e6',
+          borderRadius: '5px'
+        }}>
+          <h3>🔧 Debug-Informationen</h3>
+          <p>Alle Debug-Logs für einfaches Kopieren und Teilen:</p>
+          
+          <div style={{ marginBottom: '10px', display: 'flex', gap: '12px' }}>
+            <button 
+              onClick={async () => {
+                const debugText = debugInfo.join('\n\n');
+                await navigator.clipboard.writeText(debugText);
+                setCopyButtonState('copied');
+                setTimeout(() => setCopyButtonState('default'), 2000);
+              }}
+              className={styles.exportButton}
+              style={{
+                background: copyButtonState === 'copied' 
+                  ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' 
+                  : 'rgba(255, 255, 255, 0.9)',
+                borderColor: copyButtonState === 'copied' 
+                  ? 'rgba(16, 185, 129, 0.3)' 
+                  : 'rgba(5, 150, 105, 0.3)',
+                color: copyButtonState === 'copied' ? 'white' : '#374151',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              {copyButtonState === 'copied' ? '✅ Kopiert!' : '📋 In Zwischenablage kopieren'}
+            </button>
+            
+            <button 
+              onClick={() => setDebugInfo([])}
+              className={styles.exportButton}
+              style={{
+                borderColor: 'rgba(239, 68, 68, 0.3)'
+              }}
+            >
+              🗑️ Logs löschen
+            </button>
+          </div>
+          
+          <textarea
+            value={debugInfo.join('\n\n')}
+            readOnly
+            style={{
+              width: '100%',
+              height: '400px',
+              fontFamily: 'monospace',
+              fontSize: '12px',
+              padding: '10px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              backgroundColor: '#ffffff'
+            }}
+            placeholder="Debug-Informationen werden hier angezeigt..."
+          />
+        </div>
+      )}
+  
+      </div>
   );
 }; 

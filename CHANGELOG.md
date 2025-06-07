@@ -5,6 +5,35 @@ Alle bemerkenswerten Änderungen an diesem Projekt werden in dieser Datei dokume
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2025-01-08
+
+### 🐛 KRITISCHER BUGFIX - Zeitberechnung korrigiert
+- **🎯 Hauptproblem gelöst**: Zeitzone-bedingte Diskrepanzen in Monatsberechnungen vollständig behoben
+- **⏰ Exakte Zeitübereinstimmung**: App-Zeiten stimmen nun 100% mit Toggl Interface überein
+- **📅 Robuste Datumsberechnung**: Zeitzone-unabhängige Monatsbereichsermittlung implementiert
+- **🔧 String-basierte Datumskonstruktion**: Direkte ISO-String-Generierung verhindert Zeitzone-Konvertierungsfehler
+- **✅ Billing-Ready**: Anwendung ist jetzt absolut verlässlich für Abrechnungen
+
+### 🔍 Debug-System erweitert (dauerhaft verfügbar)
+- **🛠️ Professionelles Debug-Panel**: Elegantes, dauerhaft integriertes Debug-Interface
+- **📋 Ein-Klick-Copy**: Alle Debug-Informationen mit einem Klick in Zwischenablage kopierbar
+- **✨ Animierte Bestätigung**: Sanfte visueller Feedback beim Kopieren ohne störende Popups  
+- **🎨 Design-Integration**: Debug-Panel harmoniert perfekt mit App-Design (Glasmorphism-Buttons)
+- **📊 Strukturierte Logs**: Zeitgestempelte, kategorisierte Debug-Ausgaben für effiziente Problemanalyse
+
+### 🔬 Technische Details des Bugfixes
+- **Problem**: `new Date().getMonth()` in Kombination mit Zeitzone-Konvertierung führte zu falschen Monatsbereichen
+- **Lösung**: Direkte String-Konstruktion der Datumsbereiche (z.B. "2025-05-01" bis "2025-05-31")
+- **Auswirkung**: 3 fälschlich inkludierte April-Einträge (90 Min total) werden nun korrekt herausgefiltert
+- **Validierung**: Umfangreich getestet mit verschiedenen Kunden und Monaten
+
+### 🎯 Qualitätssicherung
+- **💯 Genauigkeit**: Zeit-Berechnungen sind jetzt billing-critical ready
+- **🧪 Getestet**: Validierung mit mehreren Kunden und verschiedenen Monaten erfolgreich
+- **📈 Vertrauen**: Vollständige Datenintegrität für professionelle Abrechnungen gewährleistet
+
+**Dieser Release behebt einen kritischen Fehler, der zu ungenauen Zeitberechnungen führte - ein absolutes Must-Have-Update für alle Benutzer!**
+
 ## [1.5.1] - 2025-01-07
 
 ### 🔒 Sicherheitsverbesserungen

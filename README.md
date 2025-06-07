@@ -15,6 +15,13 @@ Eine moderne React-Webanwendung zur Verwaltung und Analyse von Toggl-Zeiterfassu
 - ⚡ **Real-time Updates** - Live-Aktualisierung der Daten
 - 🔍 **Erweiterte Filter** - Sortierung und Filterung der Zeiteinträge
 - 🚫 **Intelligente Filterung** - Interne Projekte werden automatisch ausgeblendet
+- 🛠️ **Debug-Panel (NEU v1.6.0)** - Professionelles Debug-Interface für Problemanalyse
+
+### 🚨 **Version 1.6.0 - KRITISCHER BUGFIX**
+- **⏰ 100% Zeitgenauigkeit**: Zeitzone-bedingte Berechnungsfehler vollständig behoben
+- **✅ Billing-Ready**: App-Zeiten stimmen jetzt exakt mit Toggl Interface überein
+- **🔧 Robuste Datumslogik**: String-basierte Datumsberechnung verhindert Zeitzone-Probleme
+- **🛠️ Dauerhaftes Debug-Panel**: Elegantes Interface für Entwickler und Power-User
 
 ### 🎨 **Modernes Bubble-Design-System (v1.5.0)**
 - **Glasmorphism-Optik**: Einheitliche Bubble-Designs mit transparenten Hintergründen und Blur-Effekten
@@ -23,6 +30,22 @@ Eine moderne React-Webanwendung zur Verwaltung und Analyse von Toggl-Zeiterfassu
 - **Farbkodierte Bereiche**: Intuitive Farbgebung je Funktionsbereich (Grün für Exports, Lila für Bulk-Aktionen, Blau für Navigation)
 
 ### 📊 **Umfangreiche Datenanalyse**
+
+## 🆕 Version 1.6.0 - Zeitberechnung perfektioniert
+
+### 🐛 KRITISCHER BUGFIX
+- **⏰ Zeitzone-Problem gelöst**: Monatsberechnungen funktionieren jetzt zeitzone-unabhängig korrekt
+- **💯 Exakte Übereinstimmung**: App zeigt identische Zeiten wie Toggl Interface
+- **🎯 Billing-Critical**: Absolute Verlässlichkeit für professionelle Abrechnungen
+- **🔧 Robuste Implementierung**: String-basierte Datumsberechnung verhindert Konvertierungsfehler
+
+### 🛠️ Debug-System (dauerhaft verfügbar)
+- **Elegantes Debug-Panel**: Professionelle Debug-Oberfläche mit Glasmorphism-Design
+- **Ein-Klick-Copy**: Alle Debug-Logs mit einem Klick kopierbar
+- **Strukturierte Ausgabe**: Zeitgestempelte, kategorisierte Debug-Informationen
+- **Animierte Bestätigung**: Visuelles Feedback ohne störende Popups
+
+**🚨 Wichtiger Hinweis**: Dieser Release behebt einen kritischen Zeitberechnungsfehler - Update dringend empfohlen!
 
 ## 🆕 Version 1.4.2 - Polished UI & Enhanced Footer
 

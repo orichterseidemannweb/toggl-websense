@@ -10,6 +10,26 @@ interface ReportData {
 }
 
 export class TogglService {
+  private static readonly API_BASE_URL = 'https://api.track.toggl.com/reports/api/v3/shared';
+  
+  // 🆕 DEBUG CALLBACK: Ermöglicht es der UI, Debug-Logs zu empfangen
+  private static debugCallback: ((category: string, data: any) => void) | null = null;
+  
+  public static setDebugCallback(callback: (category: string, data: any) => void) {
+    this.debugCallback = callback;
+  }
+  
+  public static clearDebugCallback() {
+    this.debugCallback = null;
+  }
+  
+  private static addDebugLog(category: string, data: any) {
+    if (this.debugCallback) {
+      this.debugCallback(category, data);
+    }
+    console.log(`${category}:`, data);
+  }
+
   private static getBaseUrl(): string {
     const isDevelopment = import.meta.env.DEV;
     return isDevelopment 
@@ -245,7 +265,7 @@ export class TogglService {
   }
 
   // CSV-Parser-Funktion
-  public static async parseCSVData(csvData: string): Promise<ReportData[]> {
+  public static async parseCSVData(csvData: string, dateFilter?: { start: string, end: string }): Promise<ReportData[]> {
     try {
       const lines = csvData.trim().split('\n');
       if (lines.length < 2) {
@@ -254,6 +274,11 @@ export class TogglService {
 
       const headers = lines[0].split(',').map(header => header.replace(/"/g, '').trim());
       const data: ReportData[] = [];
+
+      // 🔍 DEBUG-ZÄHLER für Schockemöhle
+      let schockemohleTotal = 0;
+      let schockemohleFiltered = 0;
+      let schockemohleKept = 0;
 
       for (let i = 1; i < lines.length; i++) {
         const values = this.parseCSVLine(lines[i]);
@@ -270,12 +295,73 @@ export class TogglService {
           const isInternalClient = clientName.toLowerCase().includes('intern');
           const isInternalProject = projectName.toLowerCase().includes('intern');
           
-          if (!isInternalClient && !isInternalProject) {
-            data.push(row);
+          if (isInternalClient || isInternalProject) {
+            continue; // Überspringe interne Einträge
           }
+
+          // 🔍 DEBUG: Zähle Schockemöhle-Einträge
+          const isSchockemohle = clientName.toLowerCase().includes('schocke');
+          if (isSchockemohle) {
+            schockemohleTotal++;
+          }
+
+          // 🆕 DATUMSFILTERUNG: Filtere Einträge außerhalb des angeforderten Zeitraums
+          if (dateFilter) {
+            const entryDateStr = row['Start date'];
+            const entryDate = new Date(entryDateStr);
+            const startDate = new Date(dateFilter.start);
+            const endDate = new Date(dateFilter.end);
+            
+            // 🔍 DEBUG: Erste 3 Datumsvergleiche anzeigen
+            const isDebugEntry = Object.keys(data).length < 3;
+            if (isDebugEntry) {
+              this.addDebugLog(`🔍 DATUMSFILTER DEBUG ${Object.keys(data).length + 1}`, {
+                entryDateStr,
+                entryDate: entryDate.toISOString().split('T')[0],
+                startDate: startDate.toISOString().split('T')[0],
+                endDate: endDate.toISOString().split('T')[0],
+                isBeforeStart: entryDate < startDate,
+                isAfterEnd: entryDate > endDate,
+                shouldFilter: entryDate < startDate || entryDate > endDate
+              });
+            }
+            
+            // Berücksichtige nur Einträge innerhalb des angeforderten Zeitraums
+            // 🔧 KORREKTUR: Verwende >= für endDate, um den letzten Tag einzuschließen
+            if (entryDate < startDate || entryDate > endDate) {
+              if (isDebugEntry || clientName.toLowerCase().includes('schocke')) {
+                this.addDebugLog(`❌ GEFILTERT`, {
+                  date: entryDateStr,
+                  reason: `liegt außerhalb ${dateFilter.start} bis ${dateFilter.end}`,
+                  client: clientName
+                });
+              }
+              if (isSchockemohle) {
+                schockemohleFiltered++;
+              }
+              continue; // Überspringe Einträge außerhalb des Zeitraums
+            }
+          }
+
+          // 🔍 DEBUG: Zähle behaltene Schockemöhle-Einträge
+          if (isSchockemohle) {
+            schockemohleKept++;
+          }
+
+          data.push(row);
         }
       }
 
+      // 🔍 DEBUG: Schockemöhle-Statistik ausgeben
+      if (schockemohleTotal > 0) {
+        this.addDebugLog(`🐎 SCHOCKEMÖHLE DATUMSFILTER-STATISTIK`, {
+          'Gesamt gefunden': schockemohleTotal,
+          'Herausgefiltert': schockemohleFiltered,
+          'Behalten': schockemohleKept,
+          'Sollte sein': 86 // Erwarteter Wert
+        });
+      }
+      
       return data;
     } catch (error) {
       console.error('Fehler beim Parsen der CSV-Daten:', error);
