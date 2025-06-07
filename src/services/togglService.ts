@@ -66,7 +66,7 @@ export class TogglService {
     return false;
   }
 
-  public static async setApiTokenAndReportId(token: string, reportId: string): Promise<boolean> {
+  public static async setApiTokenAndReportId(token: string, reportId: string): Promise<{ success: boolean; errorType?: 'token' | 'reportId'; message?: string }> {
     console.log('API Token und Report-ID werden gesetzt und getestet...');
     this.apiToken = token;
     this.reportId = reportId;
@@ -77,7 +77,11 @@ export class TogglService {
       console.log('Token ungültig');
       this.apiToken = '';
       this.reportId = '';
-      return false;
+      return { 
+        success: false, 
+        errorType: 'token', 
+        message: 'API Token ist ungültig. Bitte überprüfen Sie Ihren Token in den Toggl Profile Settings.' 
+      };
     }
     
     // Dann Report-ID testen
@@ -86,14 +90,18 @@ export class TogglService {
       console.log('Report-ID ungültig oder nicht zugänglich');
       this.apiToken = '';
       this.reportId = '';
-      return false;
+      return { 
+        success: false, 
+        errorType: 'reportId', 
+        message: 'Report-ID ist ungültig oder der Report ist nicht öffentlich zugänglich. Bitte überprüfen Sie die Report-ID und stellen Sie sicher, dass der Report auf "öffentlich" gestellt ist.' 
+      };
     }
     
     // Nur bei gültigen Daten speichern
     this.saveTokenToSession(token);
     this.saveReportIdToSession(reportId);
     console.log('Token und Report-ID erfolgreich gespeichert');
-    return true;
+    return { success: true };
   }
 
   public static getApiToken(): string {

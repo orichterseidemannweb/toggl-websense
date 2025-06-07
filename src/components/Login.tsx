@@ -1,13 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './Login.module.css';
 
 interface LoginProps {
   onTokenAndReportIdChange: (token: string, reportId: string) => void;
+  shouldClearInputs?: {
+    token?: boolean;
+    reportId?: boolean;
+  };
 }
 
-const Login = ({ onTokenAndReportIdChange }: LoginProps) => {
+const Login = ({ onTokenAndReportIdChange, shouldClearInputs }: LoginProps) => {
   const [token, setToken] = useState('');
   const [reportId, setReportId] = useState('');
+
+  useEffect(() => {
+    if (shouldClearInputs?.token) {
+      setToken('');
+    }
+    if (shouldClearInputs?.reportId) {
+      setReportId('');
+    }
+  }, [shouldClearInputs]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
