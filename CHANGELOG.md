@@ -5,6 +5,12 @@ Alle bemerkenswerten Änderungen an diesem Projekt werden in dieser Datei dokume
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.2] - 2025-06-07
+
+### Verbessert
+- **Changelog-Datums-Korrektur**: Korrekte Datumsangaben für alle Versionseinträge sichergestellt
+- **Finaler Release**: Stabile Version mit vollständiger Login-UX-Optimierung
+
 ## [1.6.1] - 2025-06-07
 
 ### Verbessert
