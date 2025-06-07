@@ -273,11 +273,15 @@ export const ReportView = () => {
 
   // Filtere und gruppiere die Daten basierend auf dem ausgewählten Kunden und Projekt
   const filteredData = useMemo(() => {
+    // 🎯 WICHTIG: Keine Daten anzeigen wenn kein Kunde ausgewählt ist
+    if (selectedClient === 'Kunde auswählen') {
+      return []; // Leere Tabelle wenn kein Kunde ausgewählt
+    }
+    
     let filtered = reportData;
     
-    if (selectedClient !== 'Kunde auswählen') {
-      filtered = filtered.filter(row => row['Client'] === selectedClient);
-    }
+    // Filtere nach ausgewähltem Kunden (nur spezifische Kunden, nie "Alle")
+    filtered = filtered.filter(row => row['Client'] === selectedClient);
     
     if (selectedProject !== 'Projekt auswählen' && shouldShowProjectFilter) {
       filtered = filtered.filter(row => row['Project'] === selectedProject);
@@ -684,25 +688,44 @@ export const ReportView = () => {
         />
       )}
 
-      <div className={styles.tableContainer}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              {visibleColumns.map(column => (
-                <th key={column.field}>{column.header}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {dataWithVirtualColumns.map((row, index) => (
-              <tr key={index}>
+      {/* 🎯 SIMPLE CONDITION: Tabelle nur wenn Kunde ausgewählt */}
+      {selectedClient === 'Kunde auswählen' ? (
+        <div className={styles.noClientSelectedContainer}>
+          <div className={styles.noClientSelectedCard}>
+            <div className={styles.noClientSelectedIcon}>
+              👤
+            </div>
+            <h3 className={styles.noClientSelectedTitle}>
+              Kunde auswählen
+            </h3>
+            <p className={styles.noClientSelectedText}>
+              Bitte wählen Sie zunächst einen Kunden aus der Liste oben aus, 
+              um die entsprechenden Zeiterfassungsdaten anzuzeigen.
+            </p>
+            <div className={styles.noClientSelectedHint}>
+              💡 Nach der Kundenauswahl werden alle relevanten Projekte und Zeiten für den ausgewählten Zeitraum geladen.
+            </div>
+          </div>
+        </div>
+      ) : filteredData.length > 0 ? (
+        <div className={styles.tableContainer}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
                 {visibleColumns.map(column => (
-                  <td key={column.field}>{row[column.field]}</td>
+                  <th key={column.field}>{column.header}</th>
                 ))}
               </tr>
-            ))}
-            {/* Zusammenfassungszeile */}
-            {filteredData.length > 0 && (
+            </thead>
+            <tbody>
+              {dataWithVirtualColumns.map((row, index) => (
+                <tr key={index}>
+                  {visibleColumns.map(column => (
+                    <td key={column.field}>{row[column.field]}</td>
+                  ))}
+                </tr>
+              ))}
+              {/* Zusammenfassungszeile */}
               <tr className={styles.summaryRow}>
                 {visibleColumns.map(column => (
                   <td key={`summary-${column.field}`} className={styles.summaryCell}>
@@ -710,10 +733,14 @@ export const ReportView = () => {
                   </td>
                 ))}
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className={styles.empty}>
+          Keine Daten für den ausgewählten Kunden verfügbar.
+        </div>
+      )}
 
       <div className={styles.reportFooter}>
         {!columnVisibility.beschreibung && reportData.length > 0 && (
@@ -761,7 +788,7 @@ export const ReportView = () => {
 
       {/* 🆕 VERSION DISPLAY */}
       <div className={styles.versionContainer}>
-        <span className={styles.versionNumber}>v1.6.4</span>
+        <span className={styles.versionNumber}>v1.6.5</span>
       </div>
 
       {/* 🆕 DEBUG PANEL */}
@@ -841,7 +868,18 @@ export const ReportView = () => {
             
             <div className={styles.changelogContent}>
               <div className={styles.changelogSection}>
-                <h4>🚀 Version 1.6.4 - Aktuell (2025-01-06)</h4>
+                <h4>🚀 Version 1.6.5 - Aktuell (2025-01-06)</h4>
+                <ul>
+                  <li><strong>🎯 Client Selection Requirement</strong> - Tabelle wird erst nach Kundenauswahl angezeigt</li>
+                  <li><strong>💡 Elegante "Kunde auswählen" Nachricht</strong> - Statt überwältigender Tabelle mit allen Daten</li>
+                  <li><strong>🚫 Datenschutz-Verbesserung</strong> - Verhindert versehentliche Anzeige aller Kundeneinträge</li>
+                  <li><strong>📊 Verbesserte UX</strong> - Keine überwältigende Datenmenge beim ersten Laden</li>
+                  <li><strong>🔒 Zuverlässige Filtierung</strong> - Unmöglich, Tabelle ohne Kundenauswahl zu sehen</li>
+                </ul>
+              </div>
+              
+              <div className={styles.changelogSection}>
+                <h4>🚀 Version 1.6.4 (2025-01-06)</h4>
                 <ul>
                   <li><strong>🎯 Exklusives Panel-Management</strong> - Nur ein Panel gleichzeitig geöffnet</li>
                   <li><strong>📋 Changelog-Panel</strong> - Vollständige Versionshistorie in der App</li>

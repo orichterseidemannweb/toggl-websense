@@ -2,6 +2,25 @@
 
 Alle wichtigen Änderungen an diesem Projekt werden in dieser Datei dokumentiert.
 
+## 🚀 Version 1.6.5 - Client Selection Requirement (2025-01-06)
+
+### ✨ Neue Features
+- **🎯 Client Selection Requirement** - Tabelle wird erst nach Kundenauswahl angezeigt
+- **💡 Elegante "Kunde auswählen" Nachricht** - Statt überwältigender Tabelle mit allen Daten
+- **🚫 Datenschutz-Verbesserung** - Verhindert versehentliche Anzeige aller Kundeneinträge
+
+### 🎨 UI/UX Verbesserungen
+- **📊 Verbesserte UX** - Keine überwältigende Datenmenge beim ersten Laden
+- **🔒 Zuverlässige Filtierung** - Unmöglich, Tabelle ohne Kundenauswahl zu sehen
+- **👤 Benutzerfreundliche Anleitung** - Klare Handlungsaufforderung zur Kundenauswahl
+
+### 🔧 Technische Verbesserungen
+- **⚡ Optimierte Rendering-Logik** - Dreistufiges Conditional Rendering
+- **🎯 Failsafe Implementation** - Robuste Implementierung verhindert Datenlecks
+- **📱 Konsistente Erfahrung** - Gleiches Verhalten in Development und Production
+
+---
+
 ## 🚀 Version 1.6.4 - UI-Harmonisierung Komplett (2025-01-06)
 
 ### ✨ Neue Features
