@@ -910,7 +910,7 @@ export const ReportView = () => {
               </div>
 
               <div className={styles.changelogSection}>
-                <h4>🚀 Version 1.6.4 - Panel-Management (2025-01-06)</h4>
+                <h4>🚀 Version 1.6.4 - Panel-Management (07.06.2025)</h4>
                 <ul>
                   <li><strong>🎯 Exklusives Panel-Management</strong> - Nur ein Panel gleichzeitig geöffnet</li>
                   <li><strong>📋 Changelog-Panel</strong> - Vollständige Versionshistorie in der App</li>
@@ -922,7 +922,7 @@ export const ReportView = () => {
               </div>
 
               <div className={styles.changelogSection}>
-                <h4>🚀 Version 1.6.3 - Feedback-System (2025-06-07)</h4>
+                <h4>🚀 Version 1.6.3 - Feedback-System (07.06.2025)</h4>
                 <ul>
                   <li><strong>💡 Vollständiges Feedback-System</strong> - Feature-Requests und Bug-Reports direkt in der App</li>
                   <li><strong>🎯 Admin-Panel</strong> - Professionelle Feedback-Verwaltung mit Status-Tracking</li>
@@ -932,7 +932,7 @@ export const ReportView = () => {
               </div>
 
               <div className={styles.changelogSection}>
-                <h4>🎯 Version 1.6.0 - Kritischer Bugfix (2025-06-07)</h4>
+                <h4>🎯 Version 1.6.0 - Kritischer Bugfix (07.06.2025)</h4>
                 <ul>
                   <li><strong>🐛 HAUPTPROBLEM GELÖST</strong> - Zeitzone-bedingte Zeitberechnungsfehler komplett behoben</li>
                   <li><strong>⏰ 100% Toggl-Übereinstimmung</strong> - App-Zeiten stimmen exakt mit Toggl Interface überein</li>
@@ -942,7 +942,7 @@ export const ReportView = () => {
               </div>
 
               <div className={styles.changelogSection}>
-                <h4>🔒 Version 1.5.1 - Sicherheit & Portabilität (2025-01-07)</h4>
+                <h4>🔒 Version 1.5.1 - Sicherheit & Portabilität (07.06.2025)</h4>
                 <ul>
                   <li><strong>🔐 Report-ID Hardcoding entfernt</strong> - Keine sensiblen Daten mehr im Code</li>
                   <li><strong>🌍 Universelle Portabilität</strong> - Funktioniert mit beliebigen öffentlichen Toggl-Reports</li>
@@ -952,7 +952,7 @@ export const ReportView = () => {
               </div>
 
               <div className={styles.changelogSection}>
-                <h4>✨ Version 1.5.0 - Major UI Redesign (2025-06-06)</h4>
+                <h4>✨ Version 1.5.0 - Major UI Redesign (07.06.2025)</h4>
                 <ul>
                   <li><strong>🎨 Glasmorphism-Design</strong> - Einheitliches Bubble-Design-System</li>
                   <li><strong>🔧 Alle Komponenten redesigned</strong> - StatusBar, Buttons, Login komplett überarbeitet</li>
@@ -962,7 +962,7 @@ export const ReportView = () => {
               </div>
 
               <div className={styles.changelogSection}>
-                <h4>🚀 Version 1.4.0 - Revolutionary Bulk Export (2025-06-06)</h4>
+                <h4>🚀 Version 1.4.0 - Revolutionary Bulk Export (07.06.2025)</h4>
                 <ul>
                   <li><strong>📦 Ein-Klick-Export</strong> - Alle Kunden-PDFs mit einem Klick</li>
                   <li><strong>🧠 Intelligente Logik</strong> - Automatische Kunden- und Projekt-Erkennung</li>
@@ -972,7 +972,7 @@ export const ReportView = () => {
               </div>
 
               <div className={styles.changelogSection}>
-                <h4>📄 Version 1.2.0+ - PDF-Export & Features (2025-06-06)</h4>
+                <h4>📄 Version 1.2.0+ - PDF-Export & Features (07.06.2025)</h4>
                 <ul>
                   <li><strong>📋 Vollständige PDF-Export-Funktionalität</strong> - Professionelle Tätigkeitsnachweise</li>
                   <li><strong>🎨 Corporate Design</strong> - Firmenlogo und professionelles Layout</li>
@@ -982,7 +982,7 @@ export const ReportView = () => {
               </div>
 
               <div className={styles.changelogSection}>
-                <h4>🎉 Version 1.0.0 - Erstes Release (2025-06-06)</h4>
+                <h4>🎉 Version 1.0.0 - Erstes Release (07.06.2025)</h4>
                 <ul>
                   <li><strong>🏗️ Grundlagen</strong> - React + TypeScript + Vite Setup</li>
                   <li><strong>🔗 Toggl API Integration</strong> - Vollständige Datenanbindung</li>
