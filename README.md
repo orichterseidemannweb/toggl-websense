@@ -2,6 +2,14 @@
 
 Eine moderne React-Webanwendung zur Verwaltung und Analyse von Toggl-Zeiterfassungsdaten mit erweiterten Funktionen für Export und Berichtswesen.
 
+## 🆕 Version 1.6.2
+
+**Neue Features:**
+- ✅ **Intelligente Login-UX**: Spezifische Eingabefeld-Löschung je nach Fehlertyp  
+- ✅ **Kritischer Timezone-Bugfix**: Korrekte Monatsberechnung ohne Zeitzone-Probleme
+- ✅ **Professional Debug-System**: Integriertes Debug-Panel mit Copy-Funktion
+- 🚀 **Feedback-System**: Integriertes Feature-Request und Bug-Management
+
 ## ✨ Features
 
 - 🔐 **Sichere Token-Authentifizierung** - Verwende deinen persönlichen Toggl API Token als Login

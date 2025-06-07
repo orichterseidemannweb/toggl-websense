@@ -5,6 +5,31 @@ Alle bemerkenswerten Änderungen an diesem Projekt werden in dieser Datei dokume
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.3] - 2025-06-07
+
+### Hinzugefügt
+- **💡 Feedback-System**: Vollständiges Feature-Request und Bug-Management System
+  - Integriertes Modal für Feature-Requests und Bug-Reports
+  - Automatische Email- und Datum-Erkennung
+  - Debug-Log-Anhang-Option für bessere Fehleranalyse
+  - Prioritätsstufen: Niedrig, Mittel, Hoch, Kritisch
+  - Admin-Panel mit Status-Management (Neu → In Bearbeitung → Erledigt/Abgelehnt)
+  - Admin-Kommentar-System für Feedback-Einträge
+  - Filter nach Typ (Feature-Request/Bug) und Status
+  - CSV-Export für alle Feedback-Einträge
+  - Smart-Notifications mit Badge für neue Einträge
+  - Persistente LocalStorage-Datenhaltung
+- **🎨 Footer-Integration**: Elegante Integration des Feedback-Buttons
+- **📧 User-Email-Integration**: Automatische Erkennung der Toggl-User-Email
+
+### Entfernt
+- **📋 "Projekt-Spalte automatisch ausgeblendet"**: Info-Bubble für Feedback-System entfernt
+
+### Verbessert
+- **🎯 Benutzerfreundlichkeit**: Direktes Feedback-Geben in der App möglich
+- **🔧 Debug-Integration**: Debug-Logs können direkt mit Feedback-Reports geteilt werden
+- **👨‍💼 Admin-Workflow**: Professionelle Feedback-Verwaltung und -Verfolgung
+
 ## [1.6.2] - 2025-06-07
 
 ### Verbessert

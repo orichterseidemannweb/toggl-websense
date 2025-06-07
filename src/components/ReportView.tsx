@@ -6,6 +6,7 @@ import { ProjectFilter } from './ProjectFilter';
 import { ColumnVisibilityControl, ColumnVisibilityState } from './ColumnVisibilityControl';
 import { MonthSelector } from './MonthSelector';
 import { PDFExportService } from '../services/pdfExportService';
+import { FeedbackSystem } from './FeedbackSystem';
 import styles from './ReportView.module.css';
 
 interface ReportData {
@@ -51,6 +52,9 @@ export const ReportView = () => {
   const [debugInfo, setDebugInfo] = useState<string[]>([]);
   const [showDebugPanel, setShowDebugPanel] = useState(false);
   const [copyButtonState, setCopyButtonState] = useState<'default' | 'copied'>('default');
+  
+  // 🆕 USER EMAIL STATE für Feedback-System
+  const [userEmail, setUserEmail] = useState<string>('');
   
   // 🆕 DEBUG HELPER: Funktion zum Hinzufügen von Debug-Logs
   const addDebugLog = (category: string, data: any) => {
@@ -501,6 +505,37 @@ export const ReportView = () => {
     };
   }, []);
 
+  // 🆕 USER EMAIL FETCH: Hole User-Email für Feedback-System
+  useEffect(() => {
+    const fetchUserEmail = async () => {
+      try {
+        const isDevelopment = import.meta.env.DEV;
+        const apiUrl = isDevelopment 
+          ? '/toggl-api/api/v9/me'
+          : '/websense/api-proxy.php?endpoint=/api/v9/me';
+        
+        const response = await fetch(apiUrl, {
+          headers: {
+            'Authorization': `Basic ${btoa(`${TogglService.getApiToken()}:api_token`)}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUserEmail(data.email || '');
+        }
+      } catch (error) {
+        console.error('Fehler beim Abrufen der User-Email:', error);
+      }
+    };
+
+    const apiToken = TogglService.getApiToken();
+    if (apiToken && apiToken.length > 0) {
+      fetchUserEmail();
+    }
+  }, []);
+
   const exportToPDF = async () => {
     try {
       await PDFExportService.generateActivityReport({
@@ -663,11 +698,6 @@ export const ReportView = () => {
       </div>
 
       <div className={styles.reportFooter}>
-        {selectedClient !== 'Kunde auswählen' && availableProjects.length <= 1 && columnVisibility.projekt && (
-          <span className={`${styles.infoBubble} ${styles.infoBubblePurple}`}>
-            📋 Projekt-Spalte automatisch ausgeblendet
-          </span>
-        )}
         {!columnVisibility.beschreibung && reportData.length > 0 && (
           <span className={`${styles.infoBubble} ${styles.infoBubbleGreen}`}>
             📊 Tätigkeiten gruppiert
@@ -691,6 +721,12 @@ export const ReportView = () => {
         >
           🔧 Debug-Info {showDebugPanel ? 'ausblenden' : 'anzeigen'} ({debugInfo.length})
         </button>
+
+        {/* 🆕 FEEDBACK SYSTEM */}
+        <FeedbackSystem 
+          currentEmail={userEmail}
+          currentDebugLog={debugInfo.join('\n\n')}
+        />
       </div>
 
       {/* 🆕 DEBUG PANEL */}
