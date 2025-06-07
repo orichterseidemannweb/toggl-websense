@@ -472,9 +472,9 @@ export class TogglService {
       console.error('Fehler beim Abrufen der Workspace ID dynamisch, verwende Fallback:', error);
     }
     
-    // Fallback: Bekannte Workspace ID aus den bisherigen Daten
-    console.log('Verwende Fallback Workspace ID: 1590779');
-    return 1590779; // Ihre bekannte Workspace ID
+    // Kein Fallback - Anwendung erfordert gültige Workspace-Discovery
+    console.warn('Keine Workspace ID gefunden - Anwendung erfordert gültigen API-Token');
+    return null;
   }
 
   // Hilfsmethode um User Workspaces zu bekommen

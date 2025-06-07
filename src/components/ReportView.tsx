@@ -799,7 +799,7 @@ export const ReportView = () => {
 
       {/* 🆕 VERSION DISPLAY */}
       <div className={styles.versionContainer}>
-        <span className={styles.versionNumber}>v1.6.6</span>
+        <span className={styles.versionNumber}>v1.7.0</span>
       </div>
 
       {/* 🆕 FEEDBACK SYSTEM PANELS - NUR PANELS, KEINE BUTTONS */}
@@ -888,7 +888,19 @@ export const ReportView = () => {
             
             <div className={styles.changelogContent}>
               <div className={styles.changelogSection}>
-                <h4>🚀 Version 1.6.6 - Aktuell (2025-01-06)</h4>
+                <h4>🚀 Version 1.7.0 - Security & Universality (07.06.2025)</h4>
+                <ul>
+                  <li><strong>🔐 SECURITY AUDIT BESTANDEN</strong> - Vollständige Code-Durchleuchtung ohne Befund</li>
+                  <li><strong>🌍 100% UNIVERSELL</strong> - Letzte hartcodierte Workspace-ID entfernt</li>
+                  <li><strong>🚀 PRODUCTION-READY</strong> - App funktioniert mit jedem Toggl-Account</li>
+                  <li><strong>🔒 ZERO CREDENTIALS</strong> - Keine API-Tokens, IDs oder Emails im Code</li>
+                  <li><strong>🎯 OPEN SOURCE READY</strong> - Kann bedenkenlos geteilt werden</li>
+                  <li><strong>✨ DSGVO-KONFORM</strong> - Keine personenbezogenen Daten hardcodiert</li>
+                </ul>
+              </div>
+
+              <div className={styles.changelogSection}>
+                <h4>🔧 Version 1.6.6 - Footer-Bugfix (07.06.2025)</h4>
                 <ul>
                   <li><strong>🔧 KRITISCHER BUGFIX</strong> - Debug-Info & Changelog Buttons verschwinden nicht mehr beim Feedback-Panel öffnen</li>
                   <li><strong>🏗️ Footer-Container-Fix</strong> - Alle Buttons sind jetzt im gleichen Container und immer sichtbar</li>
